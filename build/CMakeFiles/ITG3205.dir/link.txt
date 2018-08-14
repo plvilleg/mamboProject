@@ -1,0 +1,2 @@
+/usr/bin/ar qc libITG3205.a  CMakeFiles/ITG3205.dir/lib/ITG3205.cpp.o
+/usr/bin/ranlib libITG3205.a

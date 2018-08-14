@@ -1,0 +1,26 @@
+#IncludeRegexLine: ^[ 	]*#[ 	]*(include|import)[ 	]*[<"]([^">]+)([">])
+
+#IncludeRegexScan: ^.*$
+
+#IncludeRegexComplain: ^$
+
+#IncludeRegexTransform: 
+
+../libs/ADXL345.h
+stdint.h
+-
+
+/home/pi/submarino/test/testADXL345.cpp
+iostream
+-
+stdio.h
+-
+errno.h
+-
+cmath
+-
+unistd.h
+-
+ADXL345.h
+/home/pi/submarino/test/ADXL345.h
+

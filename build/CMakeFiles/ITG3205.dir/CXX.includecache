@@ -1,0 +1,44 @@
+#IncludeRegexLine: ^[ 	]*#[ 	]*(include|import)[ 	]*[<"]([^">]+)([">])
+
+#IncludeRegexScan: ^.*$
+
+#IncludeRegexComplain: ^$
+
+#IncludeRegexTransform: 
+
+/home/pi/libsbp/c/submarino/lib/ITG3205.cpp
+wiringPiI2C.h
+-
+iostream
+-
+stdio.h
+-
+stdlib.h
+-
+errno.h
+-
+ITG3205.h
+/home/pi/libsbp/c/submarino/lib/ITG3205.h
+
+/home/pi/libsbp/c/submarino/lib/ITG3205.h
+wiringPiI2C.h
+-
+iostream
+-
+errno.h
+-
+unistd.h
+-
+stdio.h
+-
+stdlib.h
+-
+string.h
+-
+math.h
+-
+stdint.h
+-
+
+/usr/local/include/wiringPiI2C.h
+

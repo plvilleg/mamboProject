@@ -1,0 +1,3 @@
+file(REMOVE_RECURSE
+  "libITG3205.a"
+)

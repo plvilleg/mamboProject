@@ -1,0 +1,1 @@
+/usr/bin/cc  -Wall -Wextra -Wno-strict-prototypes -Wno-unknown-warning-option -std=gnu99    CMakeFiles/piksi_datalogger.dir/piksi_datalogger.c.o  -o piksi_datalogger -rdynamic -lserialport -lsbp -lm 

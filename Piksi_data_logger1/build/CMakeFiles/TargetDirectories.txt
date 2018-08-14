@@ -1,0 +1,3 @@
+/home/pi/submarino/Piksi_data_logger1/build/CMakeFiles/rebuild_cache.dir
+/home/pi/submarino/Piksi_data_logger1/build/CMakeFiles/edit_cache.dir
+/home/pi/submarino/Piksi_data_logger1/build/CMakeFiles/piksi_datalogger.dir

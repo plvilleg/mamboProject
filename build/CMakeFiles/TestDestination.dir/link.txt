@@ -1,0 +1,1 @@
+/usr/bin/c++    -Wall -Wextra -pedantic -pthread -g -O0 -fprofile-arcs -ftest-coverage -Wno-strict-prototypes   CMakeFiles/TestDestination.dir/destinationPoint.cpp.o  -o TestDestination -rdynamic -larmadillo -lwiringPi libCOMPASS.a libADXL345.a libHMC5883L.a libITG3205.a -lserialport -lsbp -lm 

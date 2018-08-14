@@ -1,0 +1,7 @@
+/home/pi/libsbp/c/submarino/build/CMakeFiles/edit_cache.dir
+/home/pi/libsbp/c/submarino/build/CMakeFiles/rebuild_cache.dir
+/home/pi/libsbp/c/submarino/build/CMakeFiles/ITG3205.dir
+/home/pi/libsbp/c/submarino/build/CMakeFiles/COMPASS.dir
+/home/pi/libsbp/c/submarino/build/CMakeFiles/HMC5883L.dir
+/home/pi/libsbp/c/submarino/build/CMakeFiles/ADXL345.dir
+/home/pi/libsbp/c/submarino/build/CMakeFiles/TestDestination.dir

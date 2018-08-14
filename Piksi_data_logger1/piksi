@@ -1,0 +1,83 @@
+		if(ret == SBP_OK_CALLBACK_EXECUTED)
+		{
+
+			seconds = (time_t)(gps_time.tow/1000);
+			time_gps = localtime(&seconds);
+
+			if(flag_f == 1){
+				setup_files(time_gps);
+				flag_f = 0;
+				printf("Started!\n\n");
+			}
+
+			strftime(buffer3,sizeof(buffer3)-1,"%Y%m%d_%H%M%S",time_gps);
+
+
+			/* Print GPS time */
+			printf("GPS Time:\n");
+			printf("\tWeek\t\t: %6d\n", (int)gps_time.wn);
+			printf("\tSeconds\t\t:%s", buffer3);
+			printf("\n");
+
+			/* Print single point position ECEF*/
+			printf("Single point position:\n");
+			printf("\tX\t: %.6lf\n",pos_ecef.x);
+			printf("\tY\t: %.6lf\n", pos_ecef.y);
+			printf("\tZ\t: %.6lf\n", pos_ecef.z);
+			printf("\n");
+
+			/* Print absolute position. */
+			printf("Absolute Position:\n ");
+			printf("\tLatitude\t: %4.10lf\n", pos_llh.lat);
+			printf("\tLongitude\t: %4.10lf\n", pos_llh.lon);
+			printf("\tHeight\t\t: %4.10lf\n", pos_llh.height);
+			printf("\tSatellites\t:  %02d\n", pos_llh.n_sats);
+			printf("\tState\t: %d\n",pos_llh.flags);
+			printf("\n");
+
+			/* Print IAR state*/
+			printf("IAR STATE:\n");
+			printf("\tIAR number\t: %3d\n",iar_state.num_hyps);
+			printf("\n");
+
+
+			dist2 =	pow(((double)baseline_ned.n)/1000, 2) + pow(((double)baseline_ned.e)/1000, 2) + pow(((double)baseline_ned.d)/1000, 2);
+			dist = sqrt(dist2);
+
+			/* Print NED (North/East/Down) baseline (position vector from base to rover). */
+			printf("Baseline (mm):\n");
+			printf("\tNorth\t\t: %6d\n", (int)baseline_ned.n);
+			printf("\tEast\t\t: %6d\n", (int)baseline_ned.e);
+			printf("\tDown\t\t: %6d\n", (int)baseline_ned.d);
+			printf("\tDistance\t\t: %.2f\n",dist);
+			printf("\n");
+
+			/* Print NED velocity. */
+			printf("velocity (mm/s):\n");
+			printf("\tNorth\t\t: %6d\n", (int)vel_ned.n);
+			printf("\tEast\t\t: %6d\n", (int)vel_ned.e);
+			printf("\tDown\t\t: %6d\n", (int)vel_ned.d);
+			printf("\n");
+
+			/* Print dilution of Precision metrics. */
+			printf("Dilution of Precision:\n");
+			printf("\tGDOP\t\t: %4.2f\n", ((float)dops.gdop/100));
+			printf("\tHDOP\t\t: %4.2f\n", ((float)dops.hdop/100));
+			printf("\tPDOP\t\t: %4.2f\n", ((float)dops.pdop/100));
+			printf("\tTDOP\t\t: %4.2f\n", ((float)dops.tdop/100));
+			printf("\tVDOP\t\t: %4.2f\n", ((float)dops.vdop/100));
+			printf("\n");
+				
+			/* Print UART state*/
+			printf("State of UART Channels:\n");
+			printf("\tUART USB\t: %2.4f\n\n", uart_state.uart_ftdi.tx_throughput);
+			printf("\tUART A TX\t\t: %2.4f\n", uart_state.uart_a.tx_throughput);
+			printf("\tUART A RX\t\t: %2.4f\n\n", uart_state.uart_a.rx_throughput);
+			printf("\tUART B TX\t\t: %2.4f\n", uart_state.uart_b.tx_throughput);
+			printf("\tUART B RX\t\t: %2.4f\n\n", uart_state.uart_b.rx_throughput);						
+
+			fprintf(archivo1,"%s,%.2f,%2d,%2d\n",buffer3,dist,baseline_ned.n_sats,baseline_ned.flags);
+			fprintf(archivo2,"%s,%4.10lf,%4.10lf,%4.10lf,%2d,%2d\n",buffer3,pos_llh.lat,pos_llh.lon,pos_llh.height,pos_llh.n_sats,pos_llh.flags);
+			fprintf(archivo3,"%s,%6d,%2d\n",buffer3,vel_ned.d,vel_ned.n_sats);
+
+		}

@@ -1,0 +1,2 @@
+/usr/bin/ar qc libHMC5883L.a  CMakeFiles/HMC5883L.dir/lib/hmc5883l.cpp.o
+/usr/bin/ranlib libHMC5883L.a

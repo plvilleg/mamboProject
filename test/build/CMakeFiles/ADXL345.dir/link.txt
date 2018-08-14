@@ -1,0 +1,2 @@
+/usr/bin/ar qc libADXL345.a  CMakeFiles/ADXL345.dir/libs/ADXL345.cpp.o
+/usr/bin/ranlib libADXL345.a

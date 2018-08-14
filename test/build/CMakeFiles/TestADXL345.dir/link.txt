@@ -1,0 +1,1 @@
+/usr/bin/c++      CMakeFiles/TestADXL345.dir/testADXL345.cpp.o  -o TestADXL345 -rdynamic -lwiringPi libADXL345.a 

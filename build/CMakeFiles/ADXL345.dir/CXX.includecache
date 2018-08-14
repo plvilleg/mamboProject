@@ -1,0 +1,36 @@
+#IncludeRegexLine: ^[ 	]*#[ 	]*(include|import)[ 	]*[<"]([^">]+)([">])
+
+#IncludeRegexScan: ^.*$
+
+#IncludeRegexComplain: ^$
+
+#IncludeRegexTransform: 
+
+/home/pi/libsbp/c/submarino/lib/ADXL345.cpp
+ADXL345.h
+/home/pi/libsbp/c/submarino/lib/ADXL345.h
+wiringPiI2C.h
+-
+iostream
+-
+errno.h
+-
+unistd.h
+-
+stdio.h
+-
+stdlib.h
+-
+string.h
+-
+math.h
+-
+stdint.h
+-
+
+/home/pi/libsbp/c/submarino/lib/ADXL345.h
+stdint.h
+-
+
+/usr/local/include/wiringPiI2C.h
+

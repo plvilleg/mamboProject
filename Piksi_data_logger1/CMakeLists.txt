@@ -1,0 +1,23 @@
+cmake_minimum_required(VERSION 2.8.9)
+project(piksi_datalogger)
+
+set(CMAKE_MODULE_PATH "${CMAKE_SOURCE_DIR}/cmake")
+
+set(CMAKE_C_FLAGS "-Wall -Wextra -Wno-strict-prototypes -Wno-unknown-warning-option -std=gnu99 ${CMAKE_C_FLAGS}")
+
+add_executable(piksi_datalogger piksi_datalogger.c)
+
+find_package(PkgConfig)
+pkg_check_modules(LIBSERIALPORT libserialport)
+link_directories(${LIBSERIALPORT_LIBRARY_DIRS})
+include_directories(${LIBSERIALPORT_INCLUDE_DIRS})
+
+link_directories("/usr/local/lib/")
+include_directories("/usr/local/include/")
+#link_directories("/home/pi/submarino/lib/")
+
+
+find_library(M_LIB m)
+
+target_link_libraries(piksi_datalogger serialport sbp ${M_LIB})
+

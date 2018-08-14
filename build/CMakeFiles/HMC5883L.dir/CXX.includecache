@@ -1,0 +1,46 @@
+#IncludeRegexLine: ^[ 	]*#[ 	]*(include|import)[ 	]*[<"]([^">]+)([">])
+
+#IncludeRegexScan: ^.*$
+
+#IncludeRegexComplain: ^$
+
+#IncludeRegexTransform: 
+
+/home/pi/libsbp/c/submarino/lib/HMC5883L.h
+wiringPiI2C.h
+-
+iostream
+-
+errno.h
+-
+unistd.h
+-
+stdio.h
+-
+stdlib.h
+-
+string.h
+-
+math.h
+-
+stdint.h
+-
+
+/home/pi/libsbp/c/submarino/lib/hmc5883l.cpp
+wiringPiI2C.h
+-
+iostream
+-
+stdio.h
+-
+stdlib.h
+-
+stdint.h
+-
+errno.h
+-
+HMC5883L.h
+/home/pi/libsbp/c/submarino/lib/HMC5883L.h
+
+/usr/local/include/wiringPiI2C.h
+

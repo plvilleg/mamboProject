@@ -3,14 +3,14 @@
 
 #include <iostream>
 #include <errno.h>
-//#include "HMC5843.h"
+#include "HMC5843.h"
 #include "ADXL345.h"
 
 #define ALPHA 0.5
 
-#ifndef ACCELRAW_STRUCT_H
-#define ACCELRAW_STRUCT_H
-struct AccelRaw
+#ifndef RAW_STRUCT_H
+#define RAW_STRUCT_H
+struct Raw
 {
 	int16_t x;
 	int16_t y;
@@ -42,9 +42,9 @@ struct AccelRotation
 #define VECTOR_STRUCT_H
 struct Vector
 {
-	int16_t XAxis;
-	int16_t YAxis;
-	int16_t ZAxis;
+	int16_t X;
+	int16_t Y;
+	int16_t Z;
 };
 #endif
 
@@ -56,10 +56,13 @@ struct Vector
 class COMPASS
 {
 public:	
-	//HMC5843 compass;
+	HMC5843 mag;
 	ADXL345 accel;
 	
-	AccelRaw accelRAW;
+	Raw accelRAW;
+	Raw magRAW;
+
+	//Vector magAxis;
 
 	void init();
 	//void Calibrate(void);
@@ -70,7 +73,7 @@ public:
 
 	AccelRotation readPitchRoll(void);
 	
-	
+	void getcalibratevalues(float *x, float *y, float *z);
 	
 	//float get_Comp_heading(void);
 	//float get_Bearing(void);
@@ -90,6 +93,8 @@ private:
 	double _xoffset;
 	double _yoffset;
 	double _zoffset;
+
+	float x_scale, y_scale, z_scale, max_x, max_y, max_z; 
 	
 };
 

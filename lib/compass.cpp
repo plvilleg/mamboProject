@@ -13,11 +13,19 @@ const float PI = (atan(1)*4);
 
 void COMPASS::init(){
 	
+	//Mag variales
+	x_scale = 1.0F;
+	y_scale = 1.0F;
+	z_scale = 1.0F;
+	
+	// Accel variable
 	fXg = 0; fYg = 0; fZg = 0;
 	xg = 0 ; yg = 0; zg = 0;
 	_xoffset = -0.023;
 	_yoffset = 0;
 	_zoffset = 0.03577027;
+
+
 	
 	setup_Compass();	
 	
@@ -29,7 +37,27 @@ void COMPASS::setup_Compass(){
 
 	cout<<"Starting Compass..!"<<endl;
 
-	
+	// config HMC5843
+	HMC5843();
+       	mag.initialize();
+        
+	while(!mag.testConnection()){
+		printf("Check mag wiring!\n");
+	}
+	printf("HMC5843 detected.!\n");
+
+        // CONFIG_A register
+        mag.setDataRate(HMC5843_RATE_10);
+        mag.setMeasurementBias(HMC5843_BIAS_NORMAL);
+
+        // CONFIG_B register
+        mag.setGain(HMC5843_GAIN_1300);
+
+        // MODE register
+        mag.setMode(HMC5843_MODE_CONTINUOUS);
+
+	printf("HMC5843 succesful config.!\n");
+
 
 
 	// Config ADXL345
@@ -40,7 +68,6 @@ void COMPASS::setup_Compass(){
 	{
 		printf("Check accel wiring!\n");
 	}
-
 	printf("ADXL345 detected.!\n");
 	
 
@@ -129,15 +156,13 @@ void COMPASS::setup_Compass(){
         accel.setOffsetZ(8);
 
 	printf("ADXL345 config succesful.!\n");
-	
-	
 }
 
 
 
 void COMPASS::read_Accel_Mag(){
 	accel.getAcceleration(&accelRAW.x, &accelRAW.y, &accelRAW.z); //Read accel.
-	//compass.getHeading(&raw.XAxis, &raw.YAxis, &raw.ZAxis); // Read mag. 
+	mag.getHeading(&magRAW.x, &magRAW.y, &magRAW.z); // Read mag. 
 
 }
 
@@ -174,4 +199,13 @@ AccelRotation COMPASS::readPitchRoll(void){
 
 
 	return rot;
+}
+
+void COMPASS::getcalibratevalues(float *x, float *y, float *z){
+	read_Accel_Mag();
+
+	*x = ((float)magRAW.x) / x_scale;
+	*y = ((float)magRAW.y) / y_scale;
+	*z = ((float)magRAW.z) / z_scale;
+
 }

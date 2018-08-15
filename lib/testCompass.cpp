@@ -5,7 +5,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <time.h>
-
+ 
 #include "COMPASS.h"
 
 
@@ -18,10 +18,13 @@ int main(){
 	//ADXL345accel;
 	
 	printf("Test accel..!! \n");
-	
-	COMPASS accel;
 
-	accel.init();
+	float x,y,z;	
+	COMPASS accel;
+	COMPASS mag;
+
+	//accel.init();
+	mag.init();
 	
 	AccelG res;
 	AccelRotation rot;
@@ -37,12 +40,20 @@ int main(){
 //
 //	}
 	
-	while(true){
-	rot = accel.readPitchRoll();
+//	while(true){
+//	rot = accel.readPitchRoll();
+//
+//	printf("Pitch: %3.5f\t",rot.pitch);
+//	printf("Roll: %3.5f\t",rot.roll);
+//	printf("\n\n");
+//	usleep(10000);
+//	}
 
-	printf("Pitch: %3.5f\t",rot.pitch);
-	printf("Roll: %3.5f\t",rot.roll);
-	printf("\n\n");
+	while(true){
+	mag.getcalibratevalues(&x, &y, &z);
+	printf("X: %3.5f\t",x);
+	printf("Y: %3.5f\t",y);
+	printf("Z: %3.5f\n\n",z);
 	usleep(10000);
 
 	}

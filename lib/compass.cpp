@@ -8,74 +8,31 @@
 
 using namespace std;
 const float PI = (atan(1)*4);
-const float alpha = 0.5;
+
 
 
 void COMPASS::init(){
 	
 	fXg = 0; fYg = 0; fZg = 0;
+	xg = 0 ; yg = 0; zg = 0;
+	_xoffset = -0.023;
+	_yoffset = 0;
+	_zoffset = 0.03577027;
 	
 	setup_Compass();	
-	//Calibrate();
-	read_Accel_Mag();
-	normalize_Accel();
-	filter_Accel();
-	Comp_Axis();
-}
-
-
-void COMPASS::Calibrate()
-{
-	int minX = 0;
-	int maxX = 0;
-	int minY = 0;
-	int maxY = 0;
-	int offX = 0;
-	int offY = 0;
-	int i = 0;
-
-	Vector mag;
-
-	printf("Calibrating..!\n");
-
-	for(i = 0; i < 1000 ; i++)
-	{
-		compass.getHeading(&mag.XAxis, &mag.YAxis, &mag.ZAxis); // Read mag. 
 	
-		if(mag.XAxis < minX) minX = mag.XAxis;
-		if(mag.XAxis > maxX) maxX = mag.XAxis;
-		if(mag.YAxis < minY) minY = mag.YAxis;
-		if(mag.YAxis > maxY) maxY = mag.YAxis;
-	}
-	
-	offX = (maxX + minX)/2;
-	offY = (maxY + minY)/2;
-
-	printf("offX %d\n",offX);
-	printf("offY %d\n",offY);
-	//compass.setOffset(offX,offY);
 	
 }
+
 
 void COMPASS::setup_Compass(){
 
 	cout<<"Starting Compass..!"<<endl;
 
-	HMC5843();
-	compass.initialize();
 	
-	while(!compass.testConnection())
-	{
-		printf("Check compass wiring!\n");
-	}
 
-	compass.initialize();	
 
-	compass.setDataRate(HMC5843_RATE_10);
-	compass.setMeasurementBias(HMC5843_BIAS_NORMAL);	
-
-	//compass.setOffset(0,0);
-
+	// Config ADXL345
 	ADXL345();
 	accel.initialize();
                 
@@ -84,127 +41,137 @@ void COMPASS::setup_Compass(){
 		printf("Check accel wiring!\n");
 	}
 
+	printf("ADXL345 detected.!\n");
 	
 
-	accel.setActivityXEnabled(true);
-	accel.setActivityYEnabled(true);
-	accel.setActivityThreshold(75);
+	// POWER_CTL register
+        accel.setLinkEnabled(false);
+        accel.setAutoSleepEnabled(false);
+        accel.setMeasureEnabled(true);
+        accel.setSleepEnabled(false);
+        accel.setWakeupFrequency(0);	
 
-	accel.setInactivityXEnabled(true);
-	accel.setInactivityYEnabled(true);
-	accel.setInactivityThreshold(75);
-	accel.setInactivityTime(10);
+	// DATA_FORMAT register
+        accel.setSelfTestEnabled(0);
+       	accel.setSPIMode(0);
+        accel.setInterruptMode(0);
+        accel.setFullResolution(1);
+       	accel.setDataJustification(0);
+        accel.setRange(3);
+
+
+	// THRESH_TAP register
+        accel.setTapThreshold(1);
+
+   	// DUR register
+        accel.setTapDuration(0);
+        
+        // LATENT register
+      	accel.setDoubleTapLatency(0);
+        
+        // WINDOW register
+        accel.setDoubleTapWindow(0);
+        
+        // THRESH_ACT register
+        accel.setActivityThreshold(1);
+        
+        // THRESH_INACT register
+        accel.setInactivityThreshold(15);
+
+        // TIME_INACT register
+        accel.setInactivityTime(43);
+        
+        // ACT_INACT_CTL register
+	accel.setActivityAC(false);
+        accel.setActivityXEnabled(false);
+       	accel.setActivityYEnabled(false);
+        accel.setActivityZEnabled(false);
+        accel.setInactivityAC(false);
+       	accel.setInactivityXEnabled(false);
+        accel.setInactivityYEnabled(false);
+        accel.setInactivityZEnabled(false);
+        
+        // THRESH_FF register
+        accel.setFreefallThreshold(0x09);
+        
+        // TIME_FF register
+        accel.setFreefallTime(0x46);
+        
+        // TAP_AXES register
+        accel.setTapAxisSuppress(false);
+        accel.setTapAxisXEnabled(false);
+        accel.setTapAxisYEnabled(false);
+        accel.setTapAxisZEnabled(false);
+
+
+	// BW_RATE register
+    	accel.setLowPowerEnabled(false);
+      	accel.setRate(10);
+
+	// FIFO_CTL register
+        accel.setFIFOMode(2);
+        accel.setFIFOTriggerInterruptPin(0);
+      	accel.setFIFOSamples(0xF);
+
+	// INT_MAP register
+        accel.setIntDataReadyPin(0);
+        accel.setIntSingleTapPin(0);
+        accel.setIntDoubleTapPin(0);
+       	accel.setIntActivityPin(0);
+        accel.setIntInactivityPin(0);
+        accel.setIntFreefallPin(0);
+        accel.setIntWatermarkPin(0);
+        accel.setIntOverrunPin(0);
+
+	// OFS* registers
+        accel.setOffsetX(-1);
+        accel.setOffsetY(0);
+        accel.setOffsetZ(8);
+
+	printf("ADXL345 config succesful.!\n");
 	
-	accel.setRange(2);
-
-	accel.setTapAxisZEnabled(true);
-	accel.setTapThreshold(50);
-	accel.setTapDuration(15);
-	accel.setDoubleTapLatency(80);
-	accel.setDoubleTapWindow(200);
-
-	accel.setFreefallThreshold(7);
-	accel.setFreefallTime(30);
-
-	accel.setIntActivityEnabled(false);
-	accel.setIntInactivityEnabled(false);
-	accel.setIntFreefallEnabled(false);
-	accel.setIntDoubleTapEnabled(false);
-	accel.setIntSingleTapEnabled(false);
 	
 }
+
+
 
 void COMPASS::read_Accel_Mag(){
-	accel.getAcceleration(&XAxis_Raw, &YAxis_Raw, &ZAxis_Raw); //Read accel.
-	compass.getHeading(&raw.XAxis, &raw.YAxis, &raw.ZAxis); // Read mag. 
+	accel.getAcceleration(&accelRAW.x, &accelRAW.y, &accelRAW.z); //Read accel.
+	//compass.getHeading(&raw.XAxis, &raw.YAxis, &raw.ZAxis); // Read mag. 
 
 }
 
 
-void COMPASS::normalize_Accel(void){
+AccelG COMPASS::read_AccelG(void){
 	read_Accel_Mag();
-	Gx = ((double)XAxis_Raw) * 0.00390625;
-	Gy = ((double)YAxis_Raw) * 0.00390625;
-	Gz = ((double)ZAxis_Raw) * 0.00390625;
-
-}
-
-void COMPASS::filter_Accel(void){
-	normalize_Accel();
-	fXg = Gx * alpha + (fXg * (1.0 - alpha));
-	fYg = Gy * alpha + (fYg * (1.0 - alpha));
-	fZg = Gz * alpha + (fZg * (1.0 - alpha));
-}
-
-
-double COMPASS::get_pitch(void){
-	filter_Accel();
-	return (atan2(fXg, sqrt(fYg*fYg + fZg*fZg))*180.0)/PI;
-}
-
-
-double COMPASS::get_roll(void){
-	filter_Accel();
-	return (atan2(-fYg,fZg)*180.0)/PI;
-}
-
-
-void COMPASS::Comp_Axis(void){
-
-	pitch = get_pitch();
-	roll =	get_roll();
-	X_comp = (norm.XAxis * cos(pitch)) + (norm.YAxis * sin(roll) * sin(pitch)) + (norm.ZAxis * cos(roll) * sin(pitch));
-	Y_comp = (norm.YAxis * cos(roll)) - (norm.ZAxis * sin(roll));
-		
-}
-
-
-float COMPASS::get_Comp_heading(){
-	float declinationAngle, heading;
 	
-	declinationAngle = -2.5 * (PI/180);
-	heading = atan2(Y_comp,X_comp);
-	heading -= declinationAngle;
+	fXg = ((int)accelRAW.x) * 0.00390625 + _xoffset;
+	fYg = ((int)accelRAW.y) * 0.00390625 + _yoffset;
+	fZg = ((int)accelRAW.z) * 0.00390625 + _zoffset;
 
-	if(heading < 0)
-		heading += (2*PI);
+	AccelG res;
 
-	if(heading > (2*PI))
-		heading -= 2*PI;		
+	res.x = fXg * ALPHA + (xg * (1.0 - ALPHA));
+	xg = res.x;
+	
+	res.y = fYg * ALPHA + (yg * (1.0 - ALPHA));
+	yg = res.y;
 
+	res.z = fZg * ALPHA + (zg * (1.0 - ALPHA));
+	zg = res.z;
 
-	return heading;
+	return res;
 }
-		
-float COMPASS::get_Comp_headingDegrees(void){
-	return get_Comp_heading() * (180/PI);
-}
 
-float COMPASS::get_Bearing(){
+AccelRotation COMPASS::readPitchRoll(void){
+	AccelG accel;
+	accel = read_AccelG();
 
-	read_Accel_Mag();
-	normalize_Accel();
-	filter_Accel();
-	Comp_Axis();
+	AccelRotation rot;
+	
+	rot.pitch = (atan2(accel.x,sqrt(accel.y * accel.y + accel.z * accel.z)) * 180.0) / PI;
+	rot.roll = (atan2(accel.y,(sqrt(accel.x * accel.x + accel.z * accel.z))) * 180.0) / PI;
 
-	if(X_comp < 0)
-	{
-		return 180 - get_Comp_headingDegrees();
-	}else 
-	if(X_comp > 0 && Y_comp < 0)
-	{
-		return - get_Comp_headingDegrees();
-	} else
-	if(X_comp > 0 && Y_comp > 0)
-	{
-		return 360 - get_Comp_headingDegrees();
-	} else 
-	if(X_comp = 0 && Y_comp < 0)
-	{
-		return 90.0;
-	} else 
-	if(X_comp = 0 && Y_comp > 0)
-	{
-		return 270.0;
-	}
+
+	return rot;
 }

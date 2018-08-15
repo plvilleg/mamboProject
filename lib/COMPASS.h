@@ -3,9 +3,40 @@
 
 #include <iostream>
 #include <errno.h>
-#include "HMC5843.h"
+//#include "HMC5843.h"
 #include "ADXL345.h"
 
+#define ALPHA 0.5
+
+#ifndef ACCELRAW_STRUCT_H
+#define ACCELRAW_STRUCT_H
+struct AccelRaw
+{
+	int16_t x;
+	int16_t y;
+	int16_t z;
+
+};
+#endif
+
+#ifndef ACCELG_STRUCT_H 
+#define ACCELG_STRUCT_H 
+struct AccelG
+{
+	double x;
+	double y;
+	double z;
+};
+#endif
+
+#ifndef ACCELROTATION_STRUCT_H
+#define ACCELROTATION_STRUCT_H
+struct AccelRotation
+{
+	double pitch;
+	double roll;
+};
+#endif
 
 #ifndef VECTOR_STRUCT_H
 #define VECTOR_STRUCT_H
@@ -17,37 +48,49 @@ struct Vector
 };
 #endif
 
+
+
+
+
+
 class COMPASS
 {
 public:	
-	HMC5843 compass;
+	//HMC5843 compass;
 	ADXL345 accel;
 	
-	Vector norm, raw;
-	
-	int16_t XAxis_Raw, YAxis_Raw, ZAxis_Raw;
-	double Gx, Gy, Gz;
-	double fXg, fYg, fZg, X_comp, Y_comp,roll,pitch;
+	AccelRaw accelRAW;
 
 	void init();
-	void Calibrate(void);
+	//void Calibrate(void);
 	void setup_Compass(void);
 	
 	void read_Accel_Mag(void);
-	void normalize_Accel(void);
-	void filter_Accel(void);
-	void Comp_Axis(void);
-	
-	float get_Comp_heading(void);
-	float get_Bearing(void);
-	float get_Comp_headingDegrees(void);
+	AccelG read_AccelG(void);
 
-	double get_pitch(void);
-	double get_roll(void);
+	AccelRotation readPitchRoll(void);
 	
 	
+	
+	//float get_Comp_heading(void);
+	//float get_Bearing(void);
+	//float get_Comp_headingDegrees(void);
+	
 
+private:
 
+	double fXg;
+	double fYg;
+	double fZg;
+
+	double xg;
+	double yg;
+	double zg;
+	
+	double _xoffset;
+	double _yoffset;
+	double _zoffset;
+	
 };
 
 

@@ -402,32 +402,41 @@ int8_t HMC5843::readBytes(int fd, uint8_t regAddr, uint8_t length, uint8_t *buff
 	return 0;
 }
 
-
-int8_t HMC5843::readBits(int fd, uint8_t regAddr, uint8_t bitStart, uint8_t length, uint8_t *buffer){
+int8_t ADXL345::readBits(int fd, uint8_t regAddr, uint8_t bitStart, uint8_t length, uint8_t *buffer){
 	uint8_t b, mask;
-	mask = ((1 << length) - 1) << (bitStart - length +1);
 	b = wiringPiI2CReadReg8(fd,regAddr);
-	b &= mask;
-	b >>= (bitStart - length +1);
-	*buffer = b;
-	return 0;
+	if(b != 0){
+		mask = ((1 << length) - 1) << (bitStart - length +1);
+		b &= mask;
+		b >>= (bitStart - length +1);
+		*buffer = b;
+		return 0;
+	}
+	return 1;
 }
 
-int8_t HMC5843::readBit(int fd, uint8_t regAddr, uint8_t bitNum, uint8_t *buffer){
+int8_t ADXL345::readBit(int fd, uint8_t regAddr, uint8_t bitNum, uint8_t *buffer){
 	uint8_t b;
 	b = wiringPiI2CReadReg8(fd,regAddr);
 	*buffer = b & (1<< bitNum);
 }
 
-bool HMC5843::writeBits(int fd, uint8_t regAddr, uint8_t bitStart, uint8_t length, uint8_t data){
+bool ADXL345::writeBits(int fd, uint8_t regAddr, uint8_t bitStart, uint8_t length, uint8_t data){
 	uint8_t b, mask;
-	mask = ((1 << length) - 1) << (bitStart - length +1);
-	data << (bitStart - length +1);
-	data &= mask;
-	b &= ~(mask);
-	b |= data;
-	if(wiringPiI2CWriteReg8(fd,regAddr,b) >= 0)
-		return true;
+
+	b = wiringPiI2CReadReg8(fd,regAddr);
+	if(b != 0){
+		mask = ((1 << length) - 1) << (bitStart - length +1);
+		data <<= (bitStart - length +1);
+		data &= mask;
+		b &= ~(mask);
+		b |= data;
+		if(wiringPiI2CWriteReg8(fd,regAddr,b) >= 0)
+			return true;
+		else
+			return false;
+	}
 	else
-		return false;	
+		return false;
+	
 }

@@ -72,7 +72,7 @@ void ADXL345::initialize() {
 	printf("Succesful wiringPi setup.!\n");
     }
 
-    e = wiringPiI2CWriteReg8(fdADXL345, ADXL345_RA_POWER_CTL, 0); // reset all power settings
+    e = wiringPiI2CWriteReg8(fdADXL345, ADXL345_RA_POWER_CTL, 0x00); // reset all power settings
 
   if(e == 0) {
 	printf("ADXL345_RA_POWER_CTL SET OK!\n");
@@ -80,7 +80,7 @@ void ADXL345::initialize() {
 	printf("ADXL345_RA_POWER_CTL FAILURE!\n");
 	return;
    }
-    setAutoSleepEnabled(true);
+    setAutoSleepEnabled(false);
     setMeasureEnabled(true);
 }
 
@@ -1694,23 +1694,26 @@ uint8_t ADXL345::getFIFOLength() {
 
 int8_t ADXL345::readBytes(int fd, uint8_t regAddr, uint8_t length, uint8_t *buffer){
 
-	buffer[0] = 0xFF - wiringPiI2CReadReg8(fd, ADXL345_RA_DATAX0);
-	buffer[1] = 0xFF - wiringPiI2CReadReg8(fd, ADXL345_RA_DATAX1);
-	buffer[2] = 0xFF - wiringPiI2CReadReg8(fd, ADXL345_RA_DATAY0);
-	buffer[3] = 0xFF - wiringPiI2CReadReg8(fd, ADXL345_RA_DATAY1);
-	buffer[4] = 0xFF - wiringPiI2CReadReg8(fd, ADXL345_RA_DATAZ0);
-	buffer[5] = 0xFF - wiringPiI2CReadReg8(fd, ADXL345_RA_DATAZ1);
+	buffer[0] = wiringPiI2CReadReg8(fd, ADXL345_RA_DATAX0);
+	buffer[1] = wiringPiI2CReadReg8(fd, ADXL345_RA_DATAX1);
+	buffer[2] = wiringPiI2CReadReg8(fd, ADXL345_RA_DATAY0);
+	buffer[3] = wiringPiI2CReadReg8(fd, ADXL345_RA_DATAY1);
+	buffer[4] = wiringPiI2CReadReg8(fd, ADXL345_RA_DATAZ0);
+	buffer[5] = wiringPiI2CReadReg8(fd, ADXL345_RA_DATAZ1);
 }
 
 
 int8_t ADXL345::readBits(int fd, uint8_t regAddr, uint8_t bitStart, uint8_t length, uint8_t *buffer){
 	uint8_t b, mask;
-	mask = ((1 << length) - 1) << (bitStart - length +1);
 	b = wiringPiI2CReadReg8(fd,regAddr);
-	b &= mask;
-	b >>= (bitStart - length +1);
-	*buffer = b;
-	return 0;
+	if(b != 0){
+		mask = ((1 << length) - 1) << (bitStart - length +1);
+		b &= mask;
+		b >>= (bitStart - length +1);
+		*buffer = b;
+		return 0;
+	}
+	return 1;
 }
 
 int8_t ADXL345::readBit(int fd, uint8_t regAddr, uint8_t bitNum, uint8_t *buffer){
@@ -1721,28 +1724,30 @@ int8_t ADXL345::readBit(int fd, uint8_t regAddr, uint8_t bitNum, uint8_t *buffer
 
 bool ADXL345::writeBits(int fd, uint8_t regAddr, uint8_t bitStart, uint8_t length, uint8_t data){
 	uint8_t b, mask;
-	mask = ((1 << length) - 1) << (bitStart - length +1);
-	data << (bitStart - length +1);
-	data &= mask;
-	b &= ~(mask);
-	b |= data;
-	if(wiringPiI2CWriteReg8(fd,regAddr,b) >= 0)
-		return true;
+	
+	b = wiringPiI2CReadReg8(fd,regAddr);
+	if(b != 0){
+		mask = ((1 << length) - 1) << (bitStart - length +1);
+		data <<= (bitStart - length +1);
+		data &= mask;
+		b &= ~(mask);
+		b |= data;
+		if(wiringPiI2CWriteReg8(fd,regAddr,b) >= 0)
+			return true;
+		else
+			return false;
+	}
 	else
-		return false;	
+		return false;
+	
 }
 
 bool ADXL345::writeBit(int fd, uint8_t regAddr, uint8_t bitNum, uint8_t data){
 	uint8_t b;
 	b = wiringPiI2CReadReg8(fd,regAddr);
 	b = (data != 0) ? (b | (1 << bitNum)) : (b & ~(1 << bitNum));
-	b |= data;
 	if(wiringPiI2CWriteReg8(fd,regAddr,b) >= 0)
 		return true;
 	else
 		return false;	
-	
-	
-
-
 }

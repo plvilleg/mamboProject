@@ -390,8 +390,6 @@ uint8_t HMC5843::getIDC() {
 
 int8_t HMC5843::readBytes(int fd, uint8_t regAddr, uint8_t length, uint8_t *buffer){
 	
-		
-	
 	buffer[0] = wiringPiI2CReadReg8(fd, HMC5843_RA_DATAX_H);
 	buffer[1] = wiringPiI2CReadReg8(fd, HMC5843_RA_DATAX_L);
 	buffer[2] = wiringPiI2CReadReg8(fd, HMC5843_RA_DATAY_H);

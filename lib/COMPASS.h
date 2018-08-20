@@ -5,8 +5,11 @@
 #include <errno.h>
 #include "HMC5843.h"
 #include "ADXL345.h"
+#include <unistd.h>
 
 #define ALPHA 0.5
+
+#define DEBUG_MODE 0
 
 #ifndef RAW_STRUCT_H
 #define RAW_STRUCT_H
@@ -65,7 +68,7 @@ public:
 	//Vector magAxis;
 
 	void init();
-	//void Calibrate(void);
+	bool Calibrate(uint8_t gain, uint8_t n_samples);
 	void setup_Compass(void);
 	
 	void read_Accel_Mag(void);

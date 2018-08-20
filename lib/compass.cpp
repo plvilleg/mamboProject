@@ -9,7 +9,16 @@
 using namespace std;
 const float PI = (atan(1)*4);
 
-
+const int16_t counts_per_milligaus[8] = {
+	1620,
+	1300,
+	970,
+	780,
+	530,
+	460,
+	390,
+	280
+};
 
 void COMPASS::init(){
 	
@@ -27,7 +36,15 @@ void COMPASS::init(){
 
 
 	
-	setup_Compass();	
+	setup_Compass();
+	
+	printf("Calibrating compass.\n");
+
+	while(!Calibrate(HMC5843_GAIN_1300, 250)){
+		printf("Calibration failure!\n");
+		usleep(1000000);
+	}
+	printf("Calibration succesfull!\n");
 	
 	
 }
@@ -208,4 +225,108 @@ void COMPASS::getcalibratevalues(float *x, float *y, float *z){
 	*y = ((float)magRAW.y) / y_scale;
 	*z = ((float)magRAW.z) / z_scale;
 
+}
+
+bool COMPASS::Calibrate(uint8_t gain, uint8_t n_samples){
+	int16_t xyz[3] = {0,0,0};;
+	int32_t xyz_total[3] = {0,0,0};
+	bool bret = true;
+	int32_t low_limit, high_limit;
+
+	if((8 > gain) && (0 < n_samples)){
+		mag.setMeasurementBias(HMC5843_BIAS_POSITIVE);
+		mag.setGain(gain);
+		mag.setMode(HMC5843_MODE_SINGLE);
+		
+		mag.getHeading(&xyz[0], &xyz[1], &xyz[2]); // Read mag. 
+		
+		for(uint8_t i = 0; i < n_samples; i++){
+				
+			printf("Measure positive bias.\n");
+			mag.setMeasurementBias(HMC5843_BIAS_POSITIVE);
+			mag.setMode(HMC5843_MODE_SINGLE);
+			mag.getHeading(&xyz[0], &xyz[1], &xyz[2]);
+			
+			xyz_total[0] += xyz[0];
+			xyz_total[1] += xyz[1];
+			xyz_total[2] += xyz[2];
+
+			printf("X: %d \tY: %d \tZ: %d\n",xyz[0],xyz[1],xyz[2]);
+
+			if(-(1 << 12) >= min(xyz[0], min(xyz[1], xyz[2])))
+			{
+				printf("HMC5843 Self test saturated. Increase range.\n");
+				bret = false;
+				break;
+			}
+		}
+
+		#if(DEBUG_MODE > 0)
+			printf("X_tot: %d \tY_tot: %d \tZ_tot: %d\n",xyz_total[0],xyz_total[1],xyz_total[2]);
+		#endif
+
+		mag.setMeasurementBias(HMC5843_BIAS_NEGATIVE);
+		mag.setGain(gain);
+		mag.setMode(HMC5843_MODE_SINGLE);
+		
+		for(uint8_t i = 0; i < n_samples; i++){
+			printf("Measure negative bias.\n");
+			mag.setMode(HMC5843_MODE_SINGLE);
+			mag.getHeading(&xyz[0], &xyz[1], &xyz[2]);
+			
+			xyz_total[0] -= xyz[0];
+			xyz_total[1] -= xyz[1];
+			xyz_total[2] -= xyz[2];
+
+			printf("X: %d \tY: %d \tZ: %d\n",xyz[0],xyz[1],xyz[2]);
+
+			if(-(1 << 12) >= min(xyz[0], min(xyz[1], xyz[2])))
+			{
+				printf("HMC5843 Self test saturated. Increase range.\n");
+				bret = false;
+				break;
+			}
+		}
+
+		#if (DEBUG_MODE > 0)
+			printf("X_tot: %d \tY_tot: %d \tZ_tot: %d\n",xyz_total[0],xyz_total[1],xyz_total[2]);
+			printf("counts_per_milligaus[gain] %d \n", counts_per_milligaus[gain] );
+
+		#endif
+
+		low_limit = SELF_TEST_LOW_LIMIT * counts_per_milligaus[gain] * 2 * n_samples;
+		high_limit = SELF_TEST_HIGH_LIMIT * counts_per_milligaus[gain] * 2 * n_samples;
+		
+		#if (DEBUG_MODE > 0)
+			printf("low_limit %d\n",low_limit);
+			printf("high_limit %d\n", high_limit);
+		#endif
+		
+
+		if((true == bret) &&
+			(low_limit <= xyz_total[0]) && (high_limit >= xyz_total[0]) &&
+			(low_limit <= xyz_total[1]) && (high_limit >= xyz_total[1]) &&
+			(low_limit <= xyz_total[2]) && (high_limit >= xyz_total[2])  ){
+
+			x_scale = (counts_per_milligaus[gain] * (HMC5843_X_SELF_TEST_GAUSS * 2)) / (xyz_total[0] / n_samples);
+			y_scale = (counts_per_milligaus[gain] * (HMC5843_Y_SELF_TEST_GAUSS * 2)) / (xyz_total[1] / n_samples);
+			z_scale = (counts_per_milligaus[gain] * (HMC5843_Z_SELF_TEST_GAUSS * 2)) / (xyz_total[2] / n_samples);
+		}else{
+			printf("HMC5843 Self test out of range. \n");
+			bret = false;
+		}
+		mag.setMeasurementBias(HMC5843_BIAS_NORMAL);
+      		mag.setGain(HMC5843_GAIN_1300);
+		mag.setMode(HMC5843_MODE_CONTINUOUS);
+
+	} else {
+		printf("HMC5843 Bad parameters.\n");
+		bret = false;
+	}
+
+		mag.setMeasurementBias(HMC5843_BIAS_NORMAL);
+      		mag.setGain(HMC5843_GAIN_1300);
+		mag.setMode(HMC5843_MODE_CONTINUOUS);
+
+	return (bret);
 }

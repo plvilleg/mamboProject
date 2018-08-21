@@ -26,6 +26,9 @@ void COMPASS::init(){
 	x_scale = 1.0F;
 	y_scale = 1.0F;
 	z_scale = 1.0F;
+	magOffsetx = 0;
+	magOffsety = 0;
+	magOffsetz = 0;
 	
 	// Accel variable
 	fXg = 0; fYg = 0; fZg = 0;
@@ -45,6 +48,10 @@ void COMPASS::init(){
 		usleep(1000000);
 	}
 	printf("Calibration succesfull!\n");
+
+	getOffset();
+
+	printf("Set offsets!\n");
 	
 	
 }
@@ -168,9 +175,9 @@ void COMPASS::setup_Compass(){
         accel.setIntOverrunPin(0);
 
 	// OFS* registers
-        accel.setOffsetX(-1);
+        accel.setOffsetX(-1);//-1
         accel.setOffsetY(0);
-        accel.setOffsetZ(8);
+        accel.setOffsetZ(8);//8
 
 	printf("ADXL345 config succesful.!\n");
 }
@@ -211,9 +218,9 @@ AccelRotation COMPASS::readPitchRoll(void){
 
 	AccelRotation rot;
 	
-	rot.pitch = (atan2(accel.x,sqrt(accel.y * accel.y + accel.z * accel.z)) * 180.0) / PI;
-	rot.roll = (atan2(accel.y,(sqrt(accel.x * accel.x + accel.z * accel.z))) * 180.0) / PI;
+	rot.roll = atan2(accel.y,accel.z);
 
+	rot.pitch = atan(((-accel.x)/(accel.y*sin(rot.roll) + accel.z*cos(rot.roll)))); 
 
 	return rot;
 }
@@ -330,3 +337,93 @@ bool COMPASS::Calibrate(uint8_t gain, uint8_t n_samples){
 
 	return (bret);
 }
+
+void COMPASS::getOffset()
+{
+	float x, y ,z;
+	float minX = 0;
+	float maxX = 0;
+	float minY = 0;
+	float maxY = 0;
+	float minZ = 0;
+	float maxZ = 0;
+	int i = 0;
+
+	printf("Obtaining Mag offsets.!\n");
+
+	for(i = 0; i < 1000 ; i++)
+	{
+		getcalibratevalues(&x, &y, &z); // Read mag. 
+	
+		if(x < minX) minX = x;
+		if(x > maxX) maxX = x;
+		if(y < minY) minY = y;
+		if(y > maxY) maxY = y;
+		if(z < minZ) minZ = z;
+		if(z > maxZ) maxZ = z;
+	}
+	
+	magOffsetx = 0;//(maxX + minX)/2;
+	magOffsety = 0;//(maxY + minY)/2;
+	magOffsetz = 0;//(maxZ + minZ)/2;
+
+	printf("magOffX %2.3f\t", magOffsetx);
+	printf("magOffY %2.3f\t", magOffsety);
+	printf("magOffZ %2.3f\n", magOffsetz);
+		
+}
+
+void COMPASS::getMagAxes(double *Bfx, double *Bfy, double *Bfz){
+
+	float Bpx, Bpy, Bpz;
+
+	getcalibratevalues(&Bpx, &Bpy, &Bpz);
+	AccelRotation rot = readPitchRoll();
+
+	*Bfx = ((Bpx - magOffsetx)*cos(rot.pitch) + (Bpy- magOffsety)*sin(rot.pitch)*sin(rot.roll) - (Bpz - magOffsetz)*sin(rot.pitch)*cos(rot.roll));	
+
+	*Bfy = (Bpy - magOffsety)*cos(rot.roll) + (Bpz - magOffsetz)*sin(rot.roll);
+	
+	*Bfz = (Bpx - magOffsetx)*sin(rot.pitch) + (Bpy - magOffsety)*cos(rot.pitch)*sin(rot.roll) + (Bpz - magOffsetz)*cos(rot.pitch)*cos(rot.roll);
+	
+
+}
+
+float COMPASS::get_Comp_heading(){
+	float declinationAngle, heading;
+	double x, y, z;
+
+	getMagAxes(&x, &y, &z);
+	
+	declinationAngle = -2.23333 * (PI/180);
+	
+	if(x < 0)
+	{
+		return 180 - ((atan2(y,x) - declinationAngle) * (180/PI));
+	}else 
+	if(x > 0 && y < 0)
+	{
+		return -((atan2(y,x) - declinationAngle) * (180/PI));
+	} else
+	if(x > 0 && y > 0)
+	{
+		return 360 - ((atan2(y,x) - declinationAngle) * (180/PI));
+	} else 
+	if(x = 0 && y < 0)
+	{
+		return 90.0;
+	} else 
+	if(x = 0 && y > 0)
+	{
+		return 270.0;
+	}
+
+//	if(heading < 0)
+//		heading += (2*PI);
+//
+//	if(heading > (2*PI))
+//		heading -= 2*PI;		
+//
+	return heading;
+}
+		

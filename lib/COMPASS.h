@@ -69,6 +69,7 @@ public:
 
 	void init();
 	bool Calibrate(uint8_t gain, uint8_t n_samples);
+	void getOffset();
 	void setup_Compass(void);
 	
 	void read_Accel_Mag(void);
@@ -77,10 +78,9 @@ public:
 	AccelRotation readPitchRoll(void);
 	
 	void getcalibratevalues(float *x, float *y, float *z);
+	void getMagAxes(double *Bfx, double *Bfy, double *Bfz);
 	
-	//float get_Comp_heading(void);
-	//float get_Bearing(void);
-	//float get_Comp_headingDegrees(void);
+	float get_Comp_heading(void);
 	
 
 private:
@@ -97,7 +97,7 @@ private:
 	double _yoffset;
 	double _zoffset;
 
-	float x_scale, y_scale, z_scale, max_x, max_y, max_z; 
+	float x_scale, y_scale, z_scale, max_x, max_y, max_z, magOffsetx, magOffsety, magOffsetz; 
 	
 };
 

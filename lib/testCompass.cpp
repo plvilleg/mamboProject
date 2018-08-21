@@ -19,12 +19,13 @@ int main(){
 	
 	printf("Test accel..!! \n");
 
-	float x,y,z;	
+	float x,y,z, bearing;	
 	COMPASS accel;
 	COMPASS mag;
 
-	//accel.init();
+	
 	mag.init();
+	//accel.init();
 	
 	AccelG res;
 	AccelRotation rot;
@@ -36,25 +37,39 @@ int main(){
 //	printf("X: %3.5f\t",res.x);
 //	printf("Y: %3.5f\t",res.y);
 //	printf("Z: %3.5f\n\n",res.z);
-//	usleep(10000);
+//	usleep(100000);
 //
 //	}
 	
-//	while(true){
-//	rot = accel.readPitchRoll();
-//
-//	printf("Pitch: %3.5f\t",rot.pitch);
-//	printf("Roll: %3.5f\t",rot.roll);
-//	printf("\n\n");
-//	usleep(10000);
-//	}
+
 
 	while(true){
-	mag.getcalibratevalues(&x, &y, &z);
-	printf("X: %3.5f\t",x);
-	printf("Y: %3.5f\t",y);
-	printf("Z: %3.5f\n\n",z);
-	usleep(10000);
+
+	rot = mag.readPitchRoll();
+
+	printf("Pitch: %3.5f\t",rot.pitch);
+	printf("Roll: %3.5f\t",rot.roll);
+	printf("\n\n");
+
+
+//	mag.getcalibratevalues(&x, &y, &z);
+//	printf("Mag compenents: \n");
+//	printf("X: %3.5f\t",x);
+//	printf("Y: %3.5f\t",y);
+//	printf("Z: %3.5f\n",z);
+//
+//
+//	res = accel.read_AccelG();
+//	printf("Accel components: \n");
+//	printf("X: %3.5f\t",res.x);
+//	printf("Y: %3.5f\t",res.y);
+//	printf("Z: %3.5f\n\n",res.z);
+
+	bearing = mag.get_Comp_heading();
+	printf("Azimuth: \t%3.2f\n",bearing);
+
+	
+	usleep(100000);
 
 	}
 

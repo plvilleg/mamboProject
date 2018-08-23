@@ -49,7 +49,7 @@ void COMPASS::init(){
 	}
 	printf("Calibration succesfull!\n");
 
-	getOffset();
+	//getOffset();
 
 	printf("Set offsets!\n");
 	
@@ -187,10 +187,10 @@ void COMPASS::setup_Compass(){
 void COMPASS::read_Accel_Mag(){
 	accel.getAcceleration(&accelRAW.x, &accelRAW.y, &accelRAW.z); //Read accel.
 	mag.getHeading(&magRAW.x, &magRAW.y, &magRAW.z); // Read mag. 
-
 }
 
-
+// ACCELEROMETER
+////////////////////////////////////////////////////////////////////////////////////
 AccelG COMPASS::read_AccelG(void){
 	read_Accel_Mag();
 	
@@ -200,14 +200,18 @@ AccelG COMPASS::read_AccelG(void){
 
 	AccelG res;
 
-	res.x = fXg * ALPHA + (xg * (1.0 - ALPHA));
+	res.x = (-1) * fXg * ALPHA + (xg * (1.0 - ALPHA));
 	xg = res.x;
 	
-	res.y = fYg * ALPHA + (yg * (1.0 - ALPHA));
+	res.y = (-1) *  fYg * ALPHA + (yg * (1.0 - ALPHA));
 	yg = res.y;
 
-	res.z = fZg * ALPHA + (zg * (1.0 - ALPHA));
+	res.z = (-1) *  fZg * ALPHA + (zg * (1.0 - ALPHA));
 	zg = res.z;
+
+	#if (DEBUG_MODE > 0)
+		printf("Accel_x: %3.2f\t Accel_y: %3.2f\t Accel_z: %3.2f\n",res.x,res.y,res.z);
+	#endif
 
 	return res;
 }
@@ -225,15 +229,9 @@ AccelRotation COMPASS::readPitchRoll(void){
 	return rot;
 }
 
-void COMPASS::getcalibratevalues(float *x, float *y, float *z){
-	read_Accel_Mag();
 
-	*x = ((float)magRAW.x) / x_scale;
-	*y = ((float)magRAW.y) / y_scale;
-	*z = ((float)magRAW.z) / z_scale;
-
-}
-
+// MAGNETOMETER
+/////////////////////////////////////////////////////////////////////////////////
 bool COMPASS::Calibrate(uint8_t gain, uint8_t n_samples){
 	int16_t xyz[3] = {0,0,0};;
 	int32_t xyz_total[3] = {0,0,0};
@@ -246,14 +244,15 @@ bool COMPASS::Calibrate(uint8_t gain, uint8_t n_samples){
 		mag.setMode(HMC5843_MODE_SINGLE);
 		
 		mag.getHeading(&xyz[0], &xyz[1], &xyz[2]); // Read mag. 
-		
+		usleep(5000);
+
 		for(uint8_t i = 0; i < n_samples; i++){
 				
 			printf("Measure positive bias.\n");
 			mag.setMeasurementBias(HMC5843_BIAS_POSITIVE);
 			mag.setMode(HMC5843_MODE_SINGLE);
 			mag.getHeading(&xyz[0], &xyz[1], &xyz[2]);
-			
+		
 			xyz_total[0] += xyz[0];
 			xyz_total[1] += xyz[1];
 			xyz_total[2] += xyz[2];
@@ -275,6 +274,9 @@ bool COMPASS::Calibrate(uint8_t gain, uint8_t n_samples){
 		mag.setMeasurementBias(HMC5843_BIAS_NEGATIVE);
 		mag.setGain(gain);
 		mag.setMode(HMC5843_MODE_SINGLE);
+		
+		usleep(100000);
+		mag.getHeading(&xyz[0], &xyz[1], &xyz[2]); // Read mag. 
 		
 		for(uint8_t i = 0; i < n_samples; i++){
 			printf("Measure negative bias.\n");
@@ -318,6 +320,11 @@ bool COMPASS::Calibrate(uint8_t gain, uint8_t n_samples){
 			x_scale = (counts_per_milligaus[gain] * (HMC5843_X_SELF_TEST_GAUSS * 2)) / (xyz_total[0] / n_samples);
 			y_scale = (counts_per_milligaus[gain] * (HMC5843_Y_SELF_TEST_GAUSS * 2)) / (xyz_total[1] / n_samples);
 			z_scale = (counts_per_milligaus[gain] * (HMC5843_Z_SELF_TEST_GAUSS * 2)) / (xyz_total[2] / n_samples);
+			
+			#if (DEBUG_MODE > 0)
+				printf("x_scale: %f\t y_scale: %f\t z_scale: %f\n",x_scale, y_scale ,z_scale);
+			#endif
+
 		}else{
 			printf("HMC5843 Self test out of range. \n");
 			bret = false;
@@ -340,7 +347,7 @@ bool COMPASS::Calibrate(uint8_t gain, uint8_t n_samples){
 
 void COMPASS::getOffset()
 {
-	float x, y ,z;
+	double x, y ,z;
 	float minX = 0;
 	float maxX = 0;
 	float minY = 0;
@@ -353,8 +360,12 @@ void COMPASS::getOffset()
 
 	for(i = 0; i < 1000 ; i++)
 	{
-		getcalibratevalues(&x, &y, &z); // Read mag. 
-	
+		getcalmag(&x, &y, &z); // Read mag. 
+		
+		#if (DEBUG_MODE > 0)
+			printf("x: %3.2f\t y: %3.2f\t z: %3.2f\n",x,y,z);
+		#endif
+			
 		if(x < minX) minX = x;
 		if(x > maxX) maxX = x;
 		if(y < minY) minY = y;
@@ -363,7 +374,7 @@ void COMPASS::getOffset()
 		if(z > maxZ) maxZ = z;
 	}
 	
-	magOffsetx = 0;//(maxX + minX)/2;
+	magOffsetx =  0;// (maxX + minX)/2;
 	magOffsety = 0;//(maxY + minY)/2;
 	magOffsetz = 0;//(maxZ + minZ)/2;
 
@@ -373,19 +384,39 @@ void COMPASS::getOffset()
 		
 }
 
+void COMPASS::getcalmag(double *x, double *y, double *z){
+	read_Accel_Mag();
+
+	*x = ((int)magRAW.x) / x_scale;
+	*y = ((int)magRAW.y) / y_scale;
+	*z = ((int)magRAW.z) / z_scale;
+
+	#if(DEBUG_MODE > 0)
+		printf("MAG_Xraw: %d\t MAG_Yraw: %d\t MAG_Zraw: %d\n",(int)magRAW.x, (int)magRAW.y, (int)magRAW.z );
+		printf("x_scale: %f\t y_scale: %f\t z_scale: %f\n",x_scale, y_scale ,z_scale);
+		printf("MAG_X_scale: %5.3f\t MAG_Yraw_scale: %5.3f\t MAG_Zraw_scale: %5.3f\n",*x,*y,*z);
+		
+	#endif
+
+}
+
 void COMPASS::getMagAxes(double *Bfx, double *Bfy, double *Bfz){
 
-	float Bpx, Bpy, Bpz;
+	double Bx, By, Bz;
 
-	getcalibratevalues(&Bpx, &Bpy, &Bpz);
+	getcalmag(&Bx, &By, &Bz);
+
 	AccelRotation rot = readPitchRoll();
 
-	*Bfx = ((Bpx - magOffsetx)*cos(rot.pitch) + (Bpy- magOffsety)*sin(rot.pitch)*sin(rot.roll) - (Bpz - magOffsetz)*sin(rot.pitch)*cos(rot.roll));	
+	*Bfx = ((Bx - magOffsetx)*cos(rot.pitch) + (By- magOffsety)*sin(rot.pitch)*sin(rot.roll) + (Bz - magOffsetz)*sin(rot.pitch)*cos(rot.roll));	
 
-	*Bfy = (Bpy - magOffsety)*cos(rot.roll) + (Bpz - magOffsetz)*sin(rot.roll);
+	*Bfy = (By - magOffsety)*cos(rot.roll) - (Bz - magOffsetz)*sin(rot.roll);
 	
-	*Bfz = (Bpx - magOffsetx)*sin(rot.pitch) + (Bpy - magOffsety)*cos(rot.pitch)*sin(rot.roll) + (Bpz - magOffsetz)*cos(rot.pitch)*cos(rot.roll);
+	*Bfz = -(Bx - magOffsetx)*sin(rot.pitch) + (By - magOffsety)*cos(rot.pitch)*sin(rot.roll) + (Bz - magOffsetz)*cos(rot.pitch)*cos(rot.roll);
 	
+	#if (DEBUG_MODE > 0)
+		printf("Mag_Comp_X: %3.2f\t Mag_Comp_Y: %3.2f\t Mag_Comp_Z: %3.2f\n",*Bfx, *Bfy, *Bfz);
+	#endif	
 
 }
 
@@ -394,26 +425,29 @@ float COMPASS::get_Comp_heading(){
 	double x, y, z;
 
 	getMagAxes(&x, &y, &z);
-	
 	declinationAngle = -2.23333 * (PI/180);
+
+	#if (DEBUG_MODE > 0)
+		printf("RAW azimuth: %3.2f\t\n",atan2(-y,x) * (180/PI));
+	#endif
 	
-	if(x < 0)
+	if((int)x < 0)
 	{
-		return 180 - ((atan2(y,x) - declinationAngle) * (180/PI));
+		return (180 - ((atan2(-y,x) - declinationAngle) * (180/PI)));
 	}else 
-	if(x > 0 && y < 0)
+	if((int)x > 0 && (int)y < 0)
 	{
-		return -((atan2(y,x) - declinationAngle) * (180/PI));
+		return (-((atan2(-y,x) - declinationAngle) * (180/PI)));
 	} else
-	if(x > 0 && y > 0)
+	if((int)x > 0 && (int)y > 0)
 	{
-		return 360 - ((atan2(y,x) - declinationAngle) * (180/PI));
+		return (360 - ((atan2(-y,x) - declinationAngle) * (180/PI)));
 	} else 
-	if(x = 0 && y < 0)
+	if((int)x == 0 && (int)y < 0)
 	{
 		return 90.0;
 	} else 
-	if(x = 0 && y > 0)
+	if((int)x == 0 && (int)y > 0)
 	{
 		return 270.0;
 	}

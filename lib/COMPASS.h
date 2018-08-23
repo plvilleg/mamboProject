@@ -9,7 +9,7 @@
 
 #define ALPHA 0.5
 
-#define DEBUG_MODE 0
+#define DEBUG_MODE 2
 
 #ifndef RAW_STRUCT_H
 #define RAW_STRUCT_H
@@ -77,7 +77,7 @@ public:
 
 	AccelRotation readPitchRoll(void);
 	
-	void getcalibratevalues(float *x, float *y, float *z);
+	void getcalmag(double *x, double *y, double *z);
 	void getMagAxes(double *Bfx, double *Bfy, double *Bfz);
 	
 	float get_Comp_heading(void);

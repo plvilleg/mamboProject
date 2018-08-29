@@ -2,11 +2,16 @@
 #include <errno.h>
 #include <cmath>
 #include <unistd.h>
+#include <armadillo>
 #include "COMPASS.h"
+#include <iostream>
+#include <string>
 #define _USE_MATH_DEFINES
-//g++ compass.cpp  HMC5843.cpp ADXL345.cpp -o compass -O2 -lwiringPi
+//g++ compass.cpp  HMC5843.cpp ADXL345.cpp -o compass -O2 -lwiringPi -larmadillo
 
 using namespace std;
+using namespace arma;
+
 const float PI = (atan(1)*4);
 
 const int16_t counts_per_milligaus[8] = {
@@ -33,15 +38,19 @@ void COMPASS::init(){
 	// Accel variable
 	fXg = 0; fYg = 0; fZg = 0;
 	xg = 0 ; yg = 0; zg = 0;
-	_xoffset = -0.023;
+	_xoffset = 0;//0.023;
 	_yoffset = 0;
-	_zoffset = 0.03577027;
+	_zoffset = 0;//0.03577027;
 
 
 	
 	setup_Compass();
+
+	
 	
 	printf("Calibrating compass.\n");
+
+	calibrateAccel();
 
 	while(!Calibrate(HMC5843_GAIN_1300, 250)){
 		printf("Calibration failure!\n");
@@ -175,9 +184,9 @@ void COMPASS::setup_Compass(){
         accel.setIntOverrunPin(0);
 
 	// OFS* registers
-        accel.setOffsetX(-1);//-1
+        accel.setOffsetX(0);//-1
         accel.setOffsetY(0);
-        accel.setOffsetZ(8);//8
+        accel.setOffsetZ(0);//8
 
 	printf("ADXL345 config succesful.!\n");
 }
@@ -191,26 +200,113 @@ void COMPASS::read_Accel_Mag(){
 
 // ACCELEROMETER
 ////////////////////////////////////////////////////////////////////////////////////
+
+void COMPASS::calibrateAccel(){
+
+	mat X(4,3);
+	mat Y(6,3);
+	mat w(6,4);
+	
+	string axis[6] = {"Z down","Z up","Y down","Y up","X down", "X up"};
+
+	X.ones();
+	Y.zeros();
+	w.cols(0,2).zeros();
+	w.cols(3,3).ones();
+	
+	Y << 0 << 0 << 1 << endr
+	  << 0 << 0 << -1 << endr
+	  << 0 << 1 << 0 << endr
+	  << 0 << -1 << 0 << endr
+	  << 1 << 0 << 0 << endr
+	  << -1 << 0 << 0 <<endr;
+
+	printf("Calibrating ACCEL.!\n");
+		
+	for(int i=0; i < 6; i++){
+	
+		printf("Put the axis in: ");
+		cout << axis[i] << endl;
+		for(int j = 3; j > 0 ; j--){
+			printf("in: %d \n",j);
+			usleep(1000000);
+		}
+	
+		read_Accel_Mag();
+		
+		w(i,0) = (int) (-1)*magRAW.x;
+		w(i,1) = (int) magRAW.y;
+		w(i,2) = (int) magRAW.z;
+		
+		usleep(1000000);
+	
+	}
+	
+	X = inv(w.t() * w) * w.t() * Y;
+	X.save("X.txt", raw_ascii);
+
+	w.print("w: ");
+	X.print("X: ");
+
+}
+
+
+
+
 AccelG COMPASS::read_AccelG(void){
+	
+	mat X(4,3);
+	mat Am(3,3);
+	mat Ao(3,1);
+	mat fg(3,1);
+	mat cg(3,1);
+	
+	X.load("X.txt");
+	
+	Am = X.submat(span(0,2),span(0,2));
+	Am.print("Am: ");
+
+	Ao = trans(X.submat(span(3,3),span(0,2)));
+	Ao.print("Ao: ");
+
 	read_Accel_Mag();
 	
-	fXg = ((int)accelRAW.x) * 0.00390625 + _xoffset;
-	fYg = ((int)accelRAW.y) * 0.00390625 + _yoffset;
-	fZg = ((int)accelRAW.z) * 0.00390625 + _zoffset;
+	printf("Read accel RAW OK.!\n");
+
+	fg(0,0) = (int)(accelRAW.x*(-1));
+	fg(1,0) = (int)(accelRAW.y);
+	fg(2,0) = (int)(accelRAW.z);
+
+	printf("Fill cg matrix OK.!\n");
+
+	cg = Am*fg + Ao;
+
+	printf("Nomalize raw values OK.!\n");
+		
+	cg *= 0.00390625*100;
+
+	printf("Normalized vaues in term of G. OK.!\n");
+
+	fXg = ((int)accelRAW.x) * (-0.00390625);
+	fYg = ((int)accelRAW.y) * (0.00390625);
+	fZg = ((int)accelRAW.z) * (0.00390625);
 
 	AccelG res;
 
-	res.x = (-1) * fXg * ALPHA + (xg * (1.0 - ALPHA));
+	res.x = fXg * ALPHA + (xg * (1.0 - ALPHA));
 	xg = res.x;
 	
-	res.y = (-1) *  fYg * ALPHA + (yg * (1.0 - ALPHA));
+	res.y = fYg * ALPHA + (yg * (1.0 - ALPHA));
 	yg = res.y;
 
-	res.z = (-1) *  fZg * ALPHA + (zg * (1.0 - ALPHA));
+	res.z = fZg * ALPHA + (zg * (1.0 - ALPHA));
 	zg = res.z;
 
 	#if (DEBUG_MODE > 0)
+		printf("Accel_xRAW: %3.2f\t Accel_yRAW: %3.2f\t Accel_zRAW: %3.2f\n",fXg,fYg,fZg);
 		printf("Accel_x: %3.2f\t Accel_y: %3.2f\t Accel_z: %3.2f\n",res.x,res.y,res.z);
+		printf("AccelCAL_x: %3.2f\t AccelCAL_y: %3.2f\t AccelCAL_z: %3.2f\n",cg(0,0),cg(1,0),cg(2,0));
+		printf("root square: %3.2f\n",sqrt(pow(res.x,2)+pow(res.y,2)+pow(res.z,2)));
 	#endif
 
 	return res;
@@ -220,12 +316,18 @@ AccelRotation COMPASS::readPitchRoll(void){
 	AccelG accel;
 	accel = read_AccelG();
 
+	double temppitch;
 	AccelRotation rot;
 	
-	rot.roll = atan2(accel.y,accel.z);
-
-	rot.pitch = atan(((-accel.x)/(accel.y*sin(rot.roll) + accel.z*cos(rot.roll)))); 
-
+	temppitch = asin(-accel.x);
+	if(temppitch >= ((PI/2)-0.05235)){
+		rot.pitch = (PI/2);
+		rot.roll=0;
+	}else{	
+		rot.pitch = temppitch;
+		rot.roll = asin(accel.y/cos(rot.pitch));
+	}
+	
 	return rot;
 }
 
@@ -246,9 +348,13 @@ bool COMPASS::Calibrate(uint8_t gain, uint8_t n_samples){
 		mag.getHeading(&xyz[0], &xyz[1], &xyz[2]); // Read mag. 
 		usleep(5000);
 
+		#if (DEBUG_MODE > 0)
+			printf("Measure positive bias.\n");
+		#endif
+
 		for(uint8_t i = 0; i < n_samples; i++){
 				
-			printf("Measure positive bias.\n");
+			
 			mag.setMeasurementBias(HMC5843_BIAS_POSITIVE);
 			mag.setMode(HMC5843_MODE_SINGLE);
 			mag.getHeading(&xyz[0], &xyz[1], &xyz[2]);
@@ -256,9 +362,11 @@ bool COMPASS::Calibrate(uint8_t gain, uint8_t n_samples){
 			xyz_total[0] += xyz[0];
 			xyz_total[1] += xyz[1];
 			xyz_total[2] += xyz[2];
-
-			printf("X: %d \tY: %d \tZ: %d\n",xyz[0],xyz[1],xyz[2]);
-
+			
+			#if (DEBUG_MODE > 0)
+				printf("X: %d \tY: %d \tZ: %d\n",xyz[0],xyz[1],xyz[2]);
+			#endif
+				
 			if(-(1 << 12) >= min(xyz[0], min(xyz[1], xyz[2])))
 			{
 				printf("HMC5843 Self test saturated. Increase range.\n");
@@ -277,9 +385,12 @@ bool COMPASS::Calibrate(uint8_t gain, uint8_t n_samples){
 		
 		usleep(100000);
 		mag.getHeading(&xyz[0], &xyz[1], &xyz[2]); // Read mag. 
-		
-		for(uint8_t i = 0; i < n_samples; i++){
+		#if (DEBUG_MODE > 0)
 			printf("Measure negative bias.\n");
+		#endif
+
+		for(uint8_t i = 0; i < n_samples; i++){
+			
 			mag.setMode(HMC5843_MODE_SINGLE);
 			mag.getHeading(&xyz[0], &xyz[1], &xyz[2]);
 			
@@ -287,7 +398,10 @@ bool COMPASS::Calibrate(uint8_t gain, uint8_t n_samples){
 			xyz_total[1] -= xyz[1];
 			xyz_total[2] -= xyz[2];
 
+		
+			#if (DEBUG_MODE > 0)
 			printf("X: %d \tY: %d \tZ: %d\n",xyz[0],xyz[1],xyz[2]);
+			#endif
 
 			if(-(1 << 12) >= min(xyz[0], min(xyz[1], xyz[2])))
 			{
@@ -388,8 +502,8 @@ void COMPASS::getcalmag(double *x, double *y, double *z){
 	read_Accel_Mag();
 
 	*x = ((int)magRAW.x) / x_scale;
-	*y = ((int)magRAW.y) / y_scale;
-	*z = ((int)magRAW.z) / z_scale;
+	*y = (-1) *((int)magRAW.y) / y_scale;
+	*z = (-1) *((int)magRAW.z) / z_scale;
 
 	#if(DEBUG_MODE > 0)
 		printf("MAG_Xraw: %d\t MAG_Yraw: %d\t MAG_Zraw: %d\n",(int)magRAW.x, (int)magRAW.y, (int)magRAW.z );

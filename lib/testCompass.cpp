@@ -9,8 +9,7 @@
 #include "COMPASS.h"
 
 
-//g++ testCompass.cpp compass.cpp HMC5843.cpp ADXL345.cpp -o testcompass -O2 -lwiringPi
-
+//g++ testCompass.cpp compass.cpp HMC5843.cpp ADXL345.cpp -o testcompass -O2 -lwiringPi -larmadillo
 const float PI = (atan(1)*4);
 
 int main(){
@@ -20,12 +19,13 @@ int main(){
 	printf("Test accel..!! \n");
 
 	float x,y,z, bearing;	
-	COMPASS accel;
+	
 	COMPASS mag;
 
 	
 	mag.init();
-	//accel.init();
+
+
 	
 	AccelG res;
 	AccelRotation rot;
@@ -47,8 +47,8 @@ int main(){
 
 	rot = mag.readPitchRoll();
 
-	printf("Pitch: %3.5f\t",rot.pitch* (180/PI));
-	printf("Roll: %3.5f\t",rot.roll* (180/PI));
+	printf("Pitch: %3.5f\t",rot.pitch * (180/PI));
+	printf("Roll: %3.5f\t",rot.roll * (180/PI));
 	printf("\n\n");
 
 
@@ -69,7 +69,7 @@ int main(){
 	printf("Azimuth: \t%3.2f\n",bearing);
 
 	
-	usleep(100000);
+	usleep(500000);
 
 	}
 

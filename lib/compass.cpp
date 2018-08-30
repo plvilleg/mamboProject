@@ -28,12 +28,13 @@ const int16_t counts_per_milligaus[8] = {
 void COMPASS::init(){
 	
 	//Mag variales
-	x_scale = 1.0F;
-	y_scale = 1.0F;
-	z_scale = 1.0F;
+	x_scale = 1.0f;
+	y_scale = 1.0f;
+	z_scale = 1.0f;
 	magOffsetx = 0;
 	magOffsety = 0;
 	magOffsetz = 0;
+	gain_scale=1.0f;
 	
 	// Accel variable
 	fXg = 0; fYg = 0; fZg = 0;
@@ -50,15 +51,17 @@ void COMPASS::init(){
 	
 	printf("Calibrating compass.\n");
 
-	calibrateAccel();
-
+	#ifdef HpresicionCalMode
+		calibrateAccel();
+	#endif
+	
 	while(!Calibrate(HMC5843_GAIN_1300, 250)){
 		printf("Calibration failure!\n");
 		usleep(1000000);
 	}
 	printf("Calibration succesfull!\n");
 
-	//getOffset();
+	getOffset();
 
 	printf("Set offsets!\n");
 	
@@ -91,7 +94,7 @@ void COMPASS::setup_Compass(){
 
 	printf("HMC5843 succesful config.!\n");
 
-
+	gain_scale = (1.0f/counts_per_milligaus[HMC5843_GAIN_1300]);
 
 	// Config ADXL345
 	ADXL345();
@@ -232,11 +235,11 @@ void COMPASS::calibrateAccel(){
 			usleep(1000000);
 		}
 	
-		read_Accel_Mag();
+		accel.getAcceleration(&accelRAW.x, &accelRAW.y, &accelRAW.z); //Read accel.
 		
-		w(i,0) = (int) (-1)*magRAW.x;
-		w(i,1) = (int) magRAW.y;
-		w(i,2) = (int) magRAW.z;
+		w(i,0) = (int)(accelRAW.x*(-1));
+		w(i,1) = (int)(accelRAW.y);
+		w(i,2) = (int)(accelRAW.z);
 		
 		usleep(1000000);
 	
@@ -251,8 +254,6 @@ void COMPASS::calibrateAccel(){
 }
 
 
-
-
 AccelG COMPASS::read_AccelG(void){
 	
 	mat X(4,3);
@@ -260,32 +261,37 @@ AccelG COMPASS::read_AccelG(void){
 	mat Ao(3,1);
 	mat fg(3,1);
 	mat cg(3,1);
+
+	accel.getAcceleration(&accelRAW.x, &accelRAW.y, &accelRAW.z); //Read accel.
 	
-	X.load("X.txt");
+	#ifdef HpresicionCalMode
+		X.load("X.txt");
 	
-	Am = X.submat(span(0,2),span(0,2));
-	Am.print("Am: ");
+		Am = X.submat(span(0,2),span(0,2));
+		Am.print("Am: ");
 
-	Ao = trans(X.submat(span(3,3),span(0,2)));
-	Ao.print("Ao: ");
-
-	read_Accel_Mag();
+		Ao = trans(X.submat(span(3,3),span(0,2)));
+		Ao.print("Ao: ");
 	
-	printf("Read accel RAW OK.!\n");
-
-	fg(0,0) = (int)(accelRAW.x*(-1));
-	fg(1,0) = (int)(accelRAW.y);
-	fg(2,0) = (int)(accelRAW.z);
-
-	printf("Fill cg matrix OK.!\n");
-
-	cg = Am*fg + Ao;
-
-	printf("Nomalize raw values OK.!\n");
 		
-	cg *= 0.00390625*100;
-
-	printf("Normalized vaues in term of G. OK.!\n");
+		
+		printf("Read accel RAW OK.!\n");
+	
+		fg(0,0) = (int)(accelRAW.x*(-1));
+		fg(1,0) = (int)(accelRAW.y);
+		fg(2,0) = (int)(accelRAW.z);
+	
+		printf("Fill cg matrix OK.!\n");
+	
+		cg = Am*fg + Ao;
+	
+		printf("Nomalize raw values OK.!\n");
+			
+		cg *= 0.00390625*100;
+	
+		printf("Normalized vaues in term of G. OK.!\n");
+	
+	#endif
 
 	fXg = ((int)accelRAW.x) * (-0.00390625);
 	fYg = ((int)accelRAW.y) * (0.00390625);
@@ -305,7 +311,9 @@ AccelG COMPASS::read_AccelG(void){
 	#if (DEBUG_MODE > 0)
 		printf("Accel_xRAW: %3.2f\t Accel_yRAW: %3.2f\t Accel_zRAW: %3.2f\n",fXg,fYg,fZg);
 		printf("Accel_x: %3.2f\t Accel_y: %3.2f\t Accel_z: %3.2f\n",res.x,res.y,res.z);
-		printf("AccelCAL_x: %3.2f\t AccelCAL_y: %3.2f\t AccelCAL_z: %3.2f\n",cg(0,0),cg(1,0),cg(2,0));
+		#ifdef HpresicionCalMode
+			printf("AccelCAL_x: %3.2f\t AccelCAL_y: %3.2f\t AccelCAL_z: %3.2f\n",cg(0,0),cg(1,0),cg(2,0));
+		#endif
 		printf("root square: %3.2f\n",sqrt(pow(res.x,2)+pow(res.y,2)+pow(res.z,2)));
 	#endif
 
@@ -461,23 +469,23 @@ bool COMPASS::Calibrate(uint8_t gain, uint8_t n_samples){
 
 void COMPASS::getOffset()
 {
-	double x, y ,z;
-	float minX = 0;
-	float maxX = 0;
-	float minY = 0;
-	float maxY = 0;
-	float minZ = 0;
-	float maxZ = 0;
+	int16_t x, y ,z;
+	int minX = 0;
+	int maxX = 0;
+	int minY = 0;
+	int maxY = 0;
+	int minZ = 0;
+	int maxZ = 0;
 	int i = 0;
 
 	printf("Obtaining Mag offsets.!\n");
 
 	for(i = 0; i < 1000 ; i++)
 	{
-		getcalmag(&x, &y, &z); // Read mag. 
-		
+		mag.getHeading(&x, &y, &z); // Read mag. 
+				
 		#if (DEBUG_MODE > 0)
-			printf("x: %3.2f\t y: %3.2f\t z: %3.2f\n",x,y,z);
+			printf("x: %d\t y: %d\t z: %d\n",x,y,z);
 		#endif
 			
 		if(x < minX) minX = x;
@@ -486,27 +494,29 @@ void COMPASS::getOffset()
 		if(y > maxY) maxY = y;
 		if(z < minZ) minZ = z;
 		if(z > maxZ) maxZ = z;
+		usleep(100);
 	}
 	
-	magOffsetx =  0;// (maxX + minX)/2;
-	magOffsety = 0;//(maxY + minY)/2;
-	magOffsetz = 0;//(maxZ + minZ)/2;
+	magOffsetx = ((maxX + minX)/2)/2;
+	magOffsety = ((maxY + minY)/2)/2;
+	magOffsetz = ((maxZ + minZ)/2)/2;
 
-	printf("magOffX %2.3f\t", magOffsetx);
-	printf("magOffY %2.3f\t", magOffsety);
-	printf("magOffZ %2.3f\n", magOffsetz);
+	printf("magOffX %d\t", magOffsetx);
+	printf("magOffY %d\t", magOffsety);
+	printf("magOffZ %d\n", magOffsetz);
 		
 }
 
 void COMPASS::getcalmag(double *x, double *y, double *z){
-	read_Accel_Mag();
+	
+	mag.getHeading(&magRAW.x, &magRAW.y, &magRAW.z); // Read mag. 
 
-	*x = ((int)magRAW.x) / x_scale;
-	*y = (-1) *((int)magRAW.y) / y_scale;
-	*z = (-1) *((int)magRAW.z) / z_scale;
+	*x = -1 * (magRAW.x - magOffsetx) / x_scale;
+	*y = (magRAW.y - magOffsety) / y_scale;
+	*z = (magRAW.z - magOffsetz) / z_scale;
 
 	#if(DEBUG_MODE > 0)
-		printf("MAG_Xraw: %d\t MAG_Yraw: %d\t MAG_Zraw: %d\n",(int)magRAW.x, (int)magRAW.y, (int)magRAW.z );
+		printf("MAG_Xraw: %d\t MAG_Yraw: %d\t MAG_Zraw: %d\n",-1*magRAW.x, magRAW.y, magRAW.z );
 		printf("x_scale: %f\t y_scale: %f\t z_scale: %f\n",x_scale, y_scale ,z_scale);
 		printf("MAG_X_scale: %5.3f\t MAG_Yraw_scale: %5.3f\t MAG_Zraw_scale: %5.3f\n",*x,*y,*z);
 		
@@ -522,11 +532,11 @@ void COMPASS::getMagAxes(double *Bfx, double *Bfy, double *Bfz){
 
 	AccelRotation rot = readPitchRoll();
 
-	*Bfx = ((Bx - magOffsetx)*cos(rot.pitch) + (By- magOffsety)*sin(rot.pitch)*sin(rot.roll) + (Bz - magOffsetz)*sin(rot.pitch)*cos(rot.roll));	
+	*Bfx = (Bx * gain_scale)*cos(rot.pitch)  + (Bz * gain_scale)*sin(rot.pitch);  //((Bx)*cos(rot.pitch) + (By)*sin(rot.pitch)*sin(rot.roll) + (Bz)*sin(rot.pitch)*cos(rot.roll));	
 
-	*Bfy = (By - magOffsety)*cos(rot.roll) - (Bz - magOffsetz)*sin(rot.roll);
+	*Bfy = (Bx * gain_scale)*sin(rot.roll)*sin(rot.pitch) + (By * gain_scale)*cos(rot.roll) - (Bz * gain_scale)*sin(rot.roll)*cos(rot.pitch);  //(By)*cos(rot.roll) - (Bz)*sin(rot.roll);
 	
-	*Bfz = -(Bx - magOffsetx)*sin(rot.pitch) + (By - magOffsety)*cos(rot.pitch)*sin(rot.roll) + (Bz - magOffsetz)*cos(rot.pitch)*cos(rot.roll);
+	*Bfz = (-Bx * gain_scale)*cos(rot.roll)*sin(rot.pitch) + (By * gain_scale)*sin(rot.roll) + (Bz * gain_scale)*cos(rot.roll)*cos(rot.pitch);    	//-(Bx)*sin(rot.pitch) + (By)*cos(rot.pitch)*sin(rot.roll) + (Bz)*cos(rot.pitch)*cos(rot.roll);
 	
 	#if (DEBUG_MODE > 0)
 		printf("Mag_Comp_X: %3.2f\t Mag_Comp_Y: %3.2f\t Mag_Comp_Z: %3.2f\n",*Bfx, *Bfy, *Bfz);
@@ -542,26 +552,26 @@ float COMPASS::get_Comp_heading(){
 	declinationAngle = -2.23333 * (PI/180);
 
 	#if (DEBUG_MODE > 0)
-		printf("RAW azimuth: %3.2f\t\n",atan2(-y,x) * (180/PI));
+		printf("RAW azimuth: %3.2f\t\n",(atan2(-y,x)+declinationAngle) * (180/PI));
 	#endif
 	
-	if((int)x < 0)
+	if(x < 0)
 	{
-		return (180 - ((atan2(-y,x) - declinationAngle) * (180/PI)));
+		return 	(180 + ((atan2(-y,x) + declinationAngle) * (180/PI)));
 	}else 
-	if((int)x > 0 && (int)y < 0)
+	if(x > 0 && y <= 0)
 	{
-		return (-((atan2(-y,x) - declinationAngle) * (180/PI)));
+		return 	(360 + ((atan2(-y,x) + declinationAngle) * (180/PI)));
 	} else
-	if((int)x > 0 && (int)y > 0)
+	if(x > 0 && y >= 0)
 	{
-		return (360 - ((atan2(-y,x) - declinationAngle) * (180/PI)));
+		return 	(atan2(-y,x) + declinationAngle) * (180/PI);		
 	} else 
-	if((int)x == 0 && (int)y < 0)
+	if(x == 0 && y < 0)
 	{
 		return 90.0;
 	} else 
-	if((int)x == 0 && (int)y > 0)
+	if(x == 0 && y > 0)
 	{
 		return 270.0;
 	}
@@ -575,3 +585,4 @@ float COMPASS::get_Comp_heading(){
 	return heading;
 }
 		
+

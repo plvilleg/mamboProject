@@ -10,6 +10,7 @@
 
 #define ALPHA 0.5
 
+//#define HpresicionCalMode
 #define DEBUG_MODE 1
 
 #ifndef RAW_STRUCT_H
@@ -96,7 +97,7 @@ private:
 	double _yoffset;
 	double _zoffset;
 
-	float x_scale, y_scale, z_scale, max_x, max_y, max_z, magOffsetx, magOffsety, magOffsetz; 
+	float x_scale, y_scale, z_scale, max_x, max_y, max_z, magOffsetx, magOffsety, magOffsetz, gain_scale; 
 	
 };
 

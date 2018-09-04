@@ -5,13 +5,11 @@
 #include <errno.h>
 #include "HMC5843.h"
 #include "ADXL345.h"
+#include "config.h"
 #include <unistd.h>
 #include <armadillo>
 
 #define ALPHA 0.5
-
-//#define HpresicionCalMode
-#define DEBUG_MODE 1
 
 #ifndef RAW_STRUCT_H
 #define RAW_STRUCT_H

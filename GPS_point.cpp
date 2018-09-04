@@ -14,6 +14,7 @@
 #include <armadillo>
 #include "COMPASS.h"
 #include "RELATIVE_DISTANCE.h"
+#include "config.h"
 #include <libserialport.h>
 extern "C" {
 #include <libsbp/sbp.h>
@@ -43,7 +44,6 @@ COMPASS comp;
 RelativeDistace distance;
 
 std::fstream archivo1;
-struct timespec t1, t2;
 
 // Serial variables
 char *serial_port_name = NULL;
@@ -185,6 +185,10 @@ double toDegrees(double radians){
 //
 int main(int argc, char **argv)
 {
+
+/////////////////////////////////////////
+//  Variables
+
 	int opt; // Option arg
 	int result = 0;
 	int ret=0;
@@ -215,6 +219,13 @@ int main(int argc, char **argv)
 	Ta = std::stod(timeA,&sz);
 	Tb = std::stod(timeB,&sz);
 	Tc = std::stod(timeC,&sz);
+
+	// This value must be adquire from the submarine
+	depth = 5.0;
+
+//
+/////////////////////////////////////////
+
 
 /////////////////////////////////////////
 // Initial setup
@@ -254,13 +265,28 @@ int main(int argc, char **argv)
 	}
 
 	setup_port();
-	sbp_setup();
+	#if (DEBUG_MODE > 0)
+		printf("Port succesfull configured..!\n");
+	#endif
+	
 
+	sbp_setup();
+	#if (DEBUG_MODE > 0)
+		printf("Piksi succesfull configured..!\n");
+	#endif
+	
 	compass.init();
+	distance.init();
+
+	// Set the position of the speakers
+	distance.setSpeaker_1(c1X,c1Y); 
+	distance.setSpeaker_2(c2X,c2X);
+	distance.setSpeaker_3(c3X,c3X);
+	
+	printf("Configuration successfull..!\n");
+	
 //
 /////////////////////////////////////////////////////////////////////////////////
-
-
 
 /////////////////////////////////////////////////////////////////////////////////
 // Create log file	
@@ -271,7 +297,7 @@ int main(int argc, char **argv)
 	//	exit(EXIT_FAILURE);		
 	//}
 
-	printf("OK3\n");
+	
 	//fprintf(archivo1,"time,latitude,longitude,depth\n");
 
 	archivo1.open(argv[6], ios::app);
@@ -283,12 +309,8 @@ int main(int argc, char **argv)
 //
 /////////////////////////////////////////////////////////////////////////////////
 
-	depth = 5.0;
-	
-	// Set the position of the speakers
-	setSpeaker_1(0,1); 
-	setSpeaker_2(0.988,0.1542);
-	setSpeaker_3(-0.988,-0.1542);
+/////////////////////////////////////////////////////////////////////////////////
+//  Main  infinity loop
 
 	while(true){	
 
@@ -351,6 +373,10 @@ int main(int argc, char **argv)
 		
 		}
 	}
+//
+/////////////////////////////////////////////////////////////////////////////////
+
+
 		archivo1.close();
 
 		result = sp_close(piksi_port);

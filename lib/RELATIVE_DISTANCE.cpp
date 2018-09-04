@@ -13,6 +13,10 @@ using namespace arma;
 
 
 void RelativeDistace::init(void){
+	#if (DEBUG_MODE > 0)
+		printf("");
+	#endif
+
 	relative_distance.ones();
 	sp1.X = 0.0;
 	sp1.Y = 0.0;
@@ -26,18 +30,27 @@ void RelativeDistace::init(void){
 void RelativeDistace::setSpeaker_1(float x1, float y1){
 	sp1.X = x1;
 	sp1.Y = y1;
+	#if (DEBUG_MODE > 0)
+		printf("");
+	#endif
 }
 	
 
 void RelativeDistace::setSpeaker_2(float x2, float y2){
 	sp2.X = x2;
 	sp2.X = y2;
+	#if (DEBUG_MODE > 0)
+		printf("");
+	#endif
 }
 
 
 void RelativeDistace::setSpeaker_3(float x3, float y3){
 	sp3.X = x3;
 	sp3.X = y3;
+	#if (DEBUG_MODE > 0)
+		printf("");
+	#endif
 }
 
 double RelativeDistace::relative_distance(double Ta, double Tb, double Tc, double depth){

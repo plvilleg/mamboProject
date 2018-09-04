@@ -9,8 +9,9 @@
 #include <time.h>
 #include <fstream>
 #include <armadillo>
+#inlcude "config.h"
 
-#define W_speed 1496.73f // T = 25º , V = 1.402385(10^3)+5.038813(T)−5.799136(10^−2)(T^ 2)+3.287156(10^−4)(T^3)−1.398845 (10^−6) (T^4) +2.787860(10^−9)(T^5)
+
 
 #ifndef SOURCE_STRUCT_H
 #define SOURCE_STRUCT_H

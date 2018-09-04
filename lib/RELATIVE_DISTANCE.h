@@ -14,32 +14,33 @@
 
 #ifndef SOURCE_STRUCT_H
 #define SOURCE_STRUCT_H
-struct Source
+struct Speaker
 {
-	double source_1;
-	double source_2;
-	double source_3;
+	float X;
+	float Y;	
 };
 #endif
 
 
-class rel_distance
+class RelativeDistace
 {
 public:
 
+	Speaker sp1, sp2, sp3;
+
 	mat relative_distance(2,1);
-	float Pos_x1, Pos_y1, Pos_x2, Pos_y2, Pos_x3, Pos_y3;
+	
+	void init(void);
 		
 	double relative_distance(double Ta, double Tb, double Tc, double depth); 
-	double real_Bearing(void);
+	
 	void setSpeaker_1(float x1, float y1);
 	void setSpeaker_2(float x2, float y2);
 	void setSpeaker_3(float x3, float y3);
-	//~relative_distance();
 
 	
 private: 
-	void init(void);
+	
 	mat leastSqueare(double x1,double y1,double x2,double y2,double x3,double y3,double a,double b,double c);
 
 

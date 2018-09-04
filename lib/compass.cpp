@@ -552,20 +552,20 @@ float COMPASS::get_Comp_heading(){
 	declinationAngle = -2.23333 * (PI/180);
 
 	#if (DEBUG_MODE > 0)
-		printf("RAW azimuth: %3.2f\t\n",(atan2(-y,x)+declinationAngle) * (180/PI));
+		printf("RAW azimuth: %3.2f\t\n",(atan2(y,x)+declinationAngle) * (180/PI));
 	#endif
 	
 	if(x < 0)
 	{
-		return 	(180 + ((atan2(-y,x) + declinationAngle) * (180/PI)));
+		return 	(180 + ((atan2(y,x) + declinationAngle) * (180/PI)));
 	}else 
 	if(x > 0 && y <= 0)
 	{
-		return 	(360 + ((atan2(-y,x) + declinationAngle) * (180/PI)));
+		return 	(360 + ((atan2(y,x) + declinationAngle) * (180/PI)));
 	} else
 	if(x > 0 && y >= 0)
 	{
-		return 	(atan2(-y,x) + declinationAngle) * (180/PI);		
+		return 	(atan2(y,x) + declinationAngle) * (180/PI);		
 	} else 
 	if(x == 0 && y < 0)
 	{

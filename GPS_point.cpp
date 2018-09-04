@@ -128,11 +128,12 @@ u32 piksi_port_read(u8 *buff, u32 n, void *context)
 /////////////////////////////////////////////////////////////////////////////////
 // Port configuration
 
-// Setup PORT
+// Help message
 void usage(char *prog_name){
 	fprintf(stderr, "usage: %s [-p serial port]\n", prog_name);
 }
 
+// Setup PORT
 void setup_port()
 {
 	int result;
@@ -170,9 +171,6 @@ void setup_port()
 //
 /////////////////////////////////////////////////////////////////////////////////
 
-
-
-
 double toRadians(double degrees){
 	return degrees * PI/180;
 }
@@ -183,6 +181,8 @@ double toDegrees(double radians){
 }
 
 
+/////////////////////////////////////////////////////////////////////////////////
+//
 int main(int argc, char **argv)
 {
 	int opt; // Option arg
@@ -216,6 +216,11 @@ int main(int argc, char **argv)
 	Tb = std::stod(timeB,&sz);
 	Tc = std::stod(timeC,&sz);
 
+/////////////////////////////////////////
+// Initial setup
+
+	printf("Configuring Buoy..!\n");
+	
 	while((opt = getopt(argc, argv, "p:")) != -1) {
 		switch(opt){
 			case 'p':
@@ -249,11 +254,18 @@ int main(int argc, char **argv)
 	}
 
 	setup_port();
-
 	sbp_setup();
 
-	// Create log file	
-		
+	compass.init();
+//
+/////////////////////////////////////////////////////////////////////////////////
+
+
+
+/////////////////////////////////////////////////////////////////////////////////
+// Create log file	
+	printf("Creating file log..!\n");	
+
 	//if( (archivo1 = fopen("test.txt", "w+") ) == NULL){
 	//	printf("ERROR: Cannot open the file");
 	//	exit(EXIT_FAILURE);		
@@ -263,15 +275,15 @@ int main(int argc, char **argv)
 	//fprintf(archivo1,"time,latitude,longitude,depth\n");
 
 	archivo1.open(argv[6], ios::app);
-
-	depth = 5.0;
-
 	
 	//printf("%s", argv[6]);
 	//strcpy(fileName,argv[6]);
 	//fileName = *argv[6];
+	printf("File log successful created..!\n");	
+//
+/////////////////////////////////////////////////////////////////////////////////
 
-
+	depth = 5.0;
 	
 	// Set the position of the speakers
 	setSpeaker_1(0,1); 
@@ -353,3 +365,5 @@ int main(int argc, char **argv)
 	
 	return 0;
 }
+//
+/////////////////////////////////////////////////////////////////////////////////

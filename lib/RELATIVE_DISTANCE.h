@@ -9,7 +9,7 @@
 #include <time.h>
 #include <fstream>
 #include <armadillo>
-#inlcude "config.h"
+#include "config.h"
 
 
 

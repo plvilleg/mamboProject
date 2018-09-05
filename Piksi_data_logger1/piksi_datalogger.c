@@ -225,7 +225,7 @@ void setup_port()
 u32 piksi_port_read(u8 *buff, u32 n, void *context)
 {
 	(void)context;
-	int i=0;
+	
 	u32 result;
 	result = sp_blocking_read(piksi_port, buff, n, 0);
 	
@@ -332,7 +332,7 @@ int main(int argc , char **argv)
 		if(ret == SBP_OK_CALLBACK_EXECUTED)
 		{
 
-			seconds = (time_t)(gps_time.tow/1000);
+			seconds = (time_t)(gps_time.tow*1000);
 			time_gps = localtime(&seconds);
 
 			if(flag_f == 1){

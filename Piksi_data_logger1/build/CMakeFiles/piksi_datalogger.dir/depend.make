@@ -8,5 +8,4 @@ CMakeFiles/piksi_datalogger.dir/piksi_datalogger.c.o: /usr/local/include/libsbp/
 CMakeFiles/piksi_datalogger.dir/piksi_datalogger.c.o: /usr/local/include/libsbp/piksi.h
 CMakeFiles/piksi_datalogger.dir/piksi_datalogger.c.o: /usr/local/include/libsbp/sbp.h
 CMakeFiles/piksi_datalogger.dir/piksi_datalogger.c.o: /usr/local/include/libsbp/system.h
-CMakeFiles/piksi_datalogger.dir/piksi_datalogger.c.o: /usr/local/include/libserialport.h
 

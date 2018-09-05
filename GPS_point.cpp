@@ -23,6 +23,9 @@ extern "C" {
 #include <libsbp/system.h>
 }
 
+
+// /g++ testCompass.cpp compass.cpp HMC5843.cpp ADXL345.cpp -o testcompass -O2 -lwiringPi -larmadillo
+
 /////////////////////////////////////////////////////////////////////////////////
 // Definitions
 
@@ -40,7 +43,7 @@ using namespace arma;
 const float PI = (atan(1)*4); 
 
 COMPASS comp;
-RelativeDistace distance;
+RelativeDistace dist;
 
 std::fstream archivo1;
 
@@ -200,6 +203,7 @@ int main(int argc, char **argv)
 	double Ta, Tb, Tc, depth;
 	
 	char buffer3[80];
+	char fixMode;
 
 	char *fileName = NULL;;
  
@@ -275,7 +279,7 @@ int main(int argc, char **argv)
 	#endif
 	
 	compass.init();
-	distance.init();
+	dist.init();
 
 	// Set the position of the speakers
 	distance.setSpeaker_1(c1X,c1Y); 
@@ -297,7 +301,7 @@ int main(int argc, char **argv)
 	//}
 
 	
-	//fprintf(archivo1,"time,latitude,longitude,depth\n");
+	//fprintf(archivo1,"time,latitude,longitude,depth,\n");
 
 	archivo1.open(argv[6], ios::app);
 	
@@ -321,28 +325,32 @@ int main(int argc, char **argv)
 	
 		if(ret == SBP_OK_CALLBACK_EXECUTED)
 		{	
-			seconds = (time_t)(gps_time.tow/1000);
-			time_gps = localtime(&seconds);
+			//seconds = (time_t)(gps_time.tow*1000);
+			//time_gps = localtime(&seconds);
 
-			
+			sprintf(buffer3,"%d/%d/%d_%d:%d:%d",gps_time.year, gps_time.month, gps_time.day, gps_time.hours, gps_time.minutes, gps_time.seconds);
 	
-			strftime(buffer3,sizeof(buffer3)-1,"%Y%m%d_%H%M%S",time_gps);
+			//strftime(buffer3,sizeof(buffer3)-1,"%Y%m%d_%H%M%S",time_gps);
 	
 			lat_O_deg =  -2.142992;//pos_llh.lat;
 			lon_O_deg =  -79.967774;//pos_llh.lon;
+
+			fixMode = pos_llh.flags & 0x07;
 		
 			printf("Latitude %2.6f\n", lat_O_deg);
 			printf("Longitude %2.6f\n",lon_O_deg);
-			printf("Distance %2.6f\n",distance);
+			
 
 			// lat_O_deg, lon_O_deg, lat_O_rad, lon_O_rad, lat_D_rad, lon_D_rad, lat_D_deg, lon_D_deg, theta, gamma
 
 
 			// Process the submarine GPS point
 
-			distance = relative_distance(Ta, Tb, Tc, depth);
+			distance = dist.relative_distance(Ta, Tb, Tc, depth);
+
+			printf("Distance %2.6f\n",distance);
 		
-			bearing = real_Bearing();
+			bearing = comp.get_Comp_heading();
 
 			theta = toRadians(bearing);
 		
@@ -352,7 +360,6 @@ int main(int argc, char **argv)
 			lon_O_rad = toRadians(lon_O_deg);
 
 			
-
 			lat_D_rad = asin( ( sin(lat_O_rad) * cos(gamma) ) + ( cos(lat_O_rad) * sin(gamma) * cos(theta) ) );
 
 			x = cos(gamma) - (sin(lat_O_rad) * sin(lat_D_rad));
@@ -361,7 +368,6 @@ int main(int argc, char **argv)
 			lon_D_rad = lon_O_rad + atan2( y, x );
 			
 			
-
 			lat_D_deg = toDegrees(lat_D_rad);
 			
 			lon_D_deg= fmod(toDegrees(lon_D_rad) + 540, 360)-180;
@@ -369,8 +375,7 @@ int main(int argc, char **argv)
 			printf("Latitude dest: %2.6f\n", lat_D_deg);
 			printf("Longitude dest: %2.6f\n",lon_D_deg);
 			
-			//fprintf(archivo1,"%s,%4.10lf,%4.10lf,%2.4f\n",buffer3,lat_dest,lon_dest,depth);
-			archivo1 << buffer3 <<","<< lat_D_deg<<"," << lon_D_deg<<"," << depth << endl;
+			archivo1 << buffer3 <<","<< lat_D_deg<<"," << lon_D_deg<<"," << depth <<","<<fixMode<<endl;
 		
 		}
 	}

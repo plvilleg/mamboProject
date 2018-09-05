@@ -6,7 +6,7 @@
 
 #IncludeRegexTransform: 
 
-/home/pi/submarino/Piksi_data_logger/PIKSI.h
+/home/pi/mamboProject/Piksi_data_logger/PIKSI.h
 stdio.h
 -
 stdlib.h
@@ -30,9 +30,9 @@ libsbp/navigation.h
 libsbp/system.h
 -
 
-/home/pi/submarino/Piksi_data_logger/piksi_datalogger.c
+/home/pi/mamboProject/Piksi_data_logger/piksi_datalogger.c
 PIKSI.h
-/home/pi/submarino/Piksi_data_logger/PIKSI.h
+/home/pi/mamboProject/Piksi_data_logger/PIKSI.h
 
 /usr/local/include/libsbp/common.h
 stdint.h

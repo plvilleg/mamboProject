@@ -4,7 +4,7 @@ set(CMAKE_DEPENDS_LANGUAGES
   )
 # The set of files for implicit dependencies of each language:
 set(CMAKE_DEPENDS_CHECK_C
-  "/home/pi/submarino/Piksi_data_logger1/piksi_datalogger.c" "/home/pi/submarino/Piksi_data_logger1/build/CMakeFiles/piksi_datalogger.dir/piksi_datalogger.c.o"
+  "/home/pi/mamboProject/Piksi_data_logger1/piksi_datalogger.c" "/home/pi/mamboProject/Piksi_data_logger1/build/CMakeFiles/piksi_datalogger.dir/piksi_datalogger.c.o"
   )
 set(CMAKE_C_COMPILER_ID "GNU")
 

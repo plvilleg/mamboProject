@@ -28,7 +28,6 @@ extern "C" {
 
 #define _USE_MATH_DEFINES
 #define ARMA_DONT_PRINT_ERRORS
-#define earth_R 6378.137
 
 //
 /////////////////////////////////////////////////////////////////////////////////
@@ -56,7 +55,7 @@ sbp_state_t sbp_state;	// State of the SBP parser.
 
 // SBP structs that messages from Piksi will feed. 
 msg_pos_llh_t	pos_llh;
-msg_gps_time_t	gps_time;
+msg_utc_time_t	gps_time;
 
 /* SBP callback node must be statically allocated. Each message ID / callback pair
 must have a unique sbp_msg_callbacks_node_t associated with it*/
@@ -85,7 +84,7 @@ void sbp_pos_llh_callback(u16 sender_id, u8 len, u8 msg[], void *context)
 
 void sbp_gps_time_callback(u16 sender_id, u8 len, u8 msg[], void *context)
 {
-	gps_time = *(msg_gps_time_t *)msg;
+	gps_time = *(msg_utc_time_t *)msg;
 }
 
 
@@ -98,13 +97,13 @@ void sbp_setup(void)
 
 	/* Register a node and callback, and associate them with a specific message ID*/
 	
-	ret = sbp_register_callback(&sbp_state, 0x201, &sbp_pos_llh_callback, NULL, &pos_llh_node);
+	ret = sbp_register_callback(&sbp_state, SBP_MSG_POS_LLH, &sbp_pos_llh_callback, NULL, &pos_llh_node);
 	if(ret != SBP_OK){
 		printf("SBP_CALLBACK_ERROR");
 		exit(EXIT_FAILURE);
 	}
 
-	ret = sbp_register_callback(&sbp_state, 0x100, &sbp_gps_time_callback, NULL, &gps_time_node);
+	ret = sbp_register_callback(&sbp_state, SBP_MSG_UTC_TIME, &sbp_gps_time_callback, NULL, &gps_time_node);
 	if(ret != SBP_OK){
 		printf("SBP_CALLBACK_ERROR");
 		exit(EXIT_FAILURE);
@@ -324,6 +323,8 @@ int main(int argc, char **argv)
 		{	
 			seconds = (time_t)(gps_time.tow/1000);
 			time_gps = localtime(&seconds);
+
+			
 	
 			strftime(buffer3,sizeof(buffer3)-1,"%Y%m%d_%H%M%S",time_gps);
 	

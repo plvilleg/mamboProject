@@ -1,0 +1,3 @@
+file(REMOVE_RECURSE
+  "libHMC5843.a"
+)

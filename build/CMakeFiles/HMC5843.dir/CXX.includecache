@@ -1,0 +1,34 @@
+#IncludeRegexLine: ^[ 	]*#[ 	]*(include|import)[ 	]*[<"]([^">]+)([">])
+
+#IncludeRegexScan: ^.*$
+
+#IncludeRegexComplain: ^$
+
+#IncludeRegexTransform: 
+
+/home/pi/mamboProject/lib/HMC5843.cpp
+HMC5843.h
+/home/pi/mamboProject/lib/HMC5843.h
+
+/home/pi/mamboProject/lib/HMC5843.h
+wiringPi.h
+/home/pi/mamboProject/lib/wiringPi.h
+wiringPiI2C.h
+/home/pi/mamboProject/lib/wiringPiI2C.h
+iostream
+-
+errno.h
+-
+unistd.h
+-
+stdio.h
+-
+stdlib.h
+-
+string.h
+-
+math.h
+-
+stdint.h
+-
+

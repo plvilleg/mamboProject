@@ -1,0 +1,38 @@
+#IncludeRegexLine: ^[ 	]*#[ 	]*(include|import)[ 	]*[<"]([^">]+)([">])
+
+#IncludeRegexScan: ^.*$
+
+#IncludeRegexComplain: ^$
+
+#IncludeRegexTransform: 
+
+/home/pi/mamboProject/lib/RELATIVE_DISTANCE.cpp
+RELATIVE_DISTANCE.h
+/home/pi/mamboProject/lib/RELATIVE_DISTANCE.h
+iostream
+-
+cmath
+-
+fstream
+-
+
+/home/pi/mamboProject/lib/RELATIVE_DISTANCE.h
+stdio.h
+-
+stdlib.h
+-
+string.h
+-
+unistd.h
+-
+time.h
+-
+fstream
+-
+armadillo
+-
+config.h
+/home/pi/mamboProject/lib/config.h
+
+/home/pi/mamboProject/lib/config.h
+

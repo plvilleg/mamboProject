@@ -1,0 +1,9 @@
+# Target rules for targets named distance
+LIB_FLAGS = -larmadillo -lgfortran
+OPT = -O2
+CXXFLAGS = $(OPT) 
+
+# Build rule for target.
+distance: cmake_check_build_system
+	$(MAKE) $(CXXFLAGS)  -o $@  $<  $(LIB_FLAGS) -f CMakeFiles/Makefile2 distance
+.PHONY : distance

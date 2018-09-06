@@ -1,0 +1,2 @@
+/usr/bin/ar qc libHMC5843.a  CMakeFiles/HMC5843.dir/lib/HMC5843.cpp.o
+/usr/bin/ranlib libHMC5843.a

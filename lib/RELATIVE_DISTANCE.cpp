@@ -5,7 +5,6 @@
 #include "RELATIVE_DISTANCE.h"
 #include <iostream>
 #include <cmath>
-#include <armadillo>
 #include <fstream>
 
 using namespace std;
@@ -17,7 +16,7 @@ void RelativeDistace::init(void){
 		printf("");
 	#endif
 
-	relative_distance.ones();
+	relative_dist.ones();
 	sp1.X = 0.0;
 	sp1.Y = 0.0;
 	sp2.X = 0.0;
@@ -27,7 +26,7 @@ void RelativeDistace::init(void){
 	
 }
 
-void RelativeDistace::setSpeaker_1(float x1, float y1){
+void RelativeDistace::setSpeaker_1(double x1, double y1){
 	sp1.X = x1;
 	sp1.Y = y1;
 	#if (DEBUG_MODE > 0)
@@ -36,7 +35,7 @@ void RelativeDistace::setSpeaker_1(float x1, float y1){
 }
 	
 
-void RelativeDistace::setSpeaker_2(float x2, float y2){
+void RelativeDistace::setSpeaker_2(double x2, double y2){
 	sp2.X = x2;
 	sp2.X = y2;
 	#if (DEBUG_MODE > 0)
@@ -45,7 +44,7 @@ void RelativeDistace::setSpeaker_2(float x2, float y2){
 }
 
 
-void RelativeDistace::setSpeaker_3(float x3, float y3){
+void RelativeDistace::setSpeaker_3(double x3, double y3){
 	sp3.X = x3;
 	sp3.X = y3;
 	#if (DEBUG_MODE > 0)
@@ -65,10 +64,10 @@ double RelativeDistace::relative_distance(double Ta, double Tb, double Tc, doubl
 	rel_distB = sqrt(pow(dist_b,2) + pow(depth,2));
 	rel_distC = sqrt(pow(dist_c,2) + pow(depth,2));
 
-	relative_distance =  leastSqueare(sp1.X, sp1.Y, sp2.X, sp2.Y, sp3.X, sp3.Y, rel_distA, rel_distB, rel_distC);
+	relative_dist =  leastSqueare(sp1.X, sp1.Y, sp2.X, sp2.Y, sp3.X, sp3.Y, rel_distA, rel_distB, rel_distC);
 
-	XAxis = relative_distance.col(0);
-	YAxis = relative_distance.col(1);
+	XAxis =  relative_dist(0,0);
+	YAxis =  relative_dist(0,1);
 
 	return sqrt(pow(XAxis,2) + pow(YAxis,2));
 }

@@ -11,7 +11,7 @@
 #include <armadillo>
 #include "config.h"
 
-
+using namespace arma;
 
 #ifndef SOURCE_STRUCT_H
 #define SOURCE_STRUCT_H
@@ -23,21 +23,27 @@ struct Speaker
 #endif
 
 
+
 class RelativeDistace
 {
 public:
 
 	Speaker sp1, sp2, sp3;
 
-	mat relative_distance(2,1);
+	mat relative_dist;
 	
+	
+	RelativeDistace()
+		: relative_dist(2,1) {
+	}
+
 	void init(void);
 		
 	double relative_distance(double Ta, double Tb, double Tc, double depth); 
 	
-	void setSpeaker_1(float x1, float y1);
-	void setSpeaker_2(float x2, float y2);
-	void setSpeaker_3(float x3, float y3);
+	void setSpeaker_1(double x1, double y1);
+	void setSpeaker_2(double x2, double y2);
+	void setSpeaker_3(double x3, double y3);
 
 	
 private: 

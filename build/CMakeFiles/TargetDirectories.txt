@@ -1,0 +1,7 @@
+/home/pi/mamboProject/build/CMakeFiles/rebuild_cache.dir
+/home/pi/mamboProject/build/CMakeFiles/edit_cache.dir
+/home/pi/mamboProject/build/CMakeFiles/COMPASS.dir
+/home/pi/mamboProject/build/CMakeFiles/ADXL345.dir
+/home/pi/mamboProject/build/CMakeFiles/HMC5843.dir
+/home/pi/mamboProject/build/CMakeFiles/TestGPS_point.dir
+/home/pi/mamboProject/build/CMakeFiles/DISTANCE.dir

@@ -1,0 +1,1 @@
+/usr/bin/c++    -O2  -I /home/pi/armadillo-8.600.0/include/ -DARMA_DONT_USE_WRAPPER -lblas -llapack -Wall -Wextra -pedantic -pthread -g -O0 -fprofile-arcs -ftest-coverage   CMakeFiles/TestGPS_point.dir/GPS_point.cpp.o  -o TestGPS_point -rdynamic -larmadillo -lwiringPi libCOMPASS.a libADXL345.a libHMC5843.a libDISTANCE.a -lserialport -lsbp -lm 

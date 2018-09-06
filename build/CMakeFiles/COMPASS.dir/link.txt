@@ -1,0 +1,2 @@
+/usr/bin/ar qc libCOMPASS.a  CMakeFiles/COMPASS.dir/lib/compass.cpp.o
+/usr/bin/ranlib libCOMPASS.a

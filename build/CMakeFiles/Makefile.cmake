@@ -84,7 +84,6 @@ set(CMAKE_MAKEFILE_DEPENDS
   "/usr/share/cmake-3.7/Modules/Compiler/XL-CXX-DetermineCompiler.cmake"
   "/usr/share/cmake-3.7/Modules/Compiler/zOS-C-DetermineCompiler.cmake"
   "/usr/share/cmake-3.7/Modules/Compiler/zOS-CXX-DetermineCompiler.cmake"
-  "/usr/share/cmake-3.7/Modules/FindArmadillo.cmake"
   "/usr/share/cmake-3.7/Modules/FindPackageHandleStandardArgs.cmake"
   "/usr/share/cmake-3.7/Modules/FindPackageMessage.cmake"
   "/usr/share/cmake-3.7/Modules/FindPkgConfig.cmake"
@@ -116,8 +115,8 @@ set(CMAKE_MAKEFILE_PRODUCTS
 # Dependency information for all targets:
 set(CMAKE_DEPEND_INFO_FILES
   "CMakeFiles/COMPASS.dir/DependInfo.cmake"
+  "CMakeFiles/TestGPS_point.dir/DependInfo.cmake"
   "CMakeFiles/ADXL345.dir/DependInfo.cmake"
   "CMakeFiles/HMC5843.dir/DependInfo.cmake"
-  "CMakeFiles/TestGPS_point.dir/DependInfo.cmake"
-  "CMakeFiles/DISTANCE.dir/DependInfo.cmake"
+  "CMakeFiles/RELATIVE_DISTANCE.dir/DependInfo.cmake"
   )

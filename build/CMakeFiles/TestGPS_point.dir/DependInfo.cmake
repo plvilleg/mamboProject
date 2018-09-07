@@ -11,7 +11,7 @@ set(CMAKE_CXX_COMPILER_ID "GNU")
 # The include file search paths:
 set(CMAKE_CXX_TARGET_INCLUDE_PATH
   "/usr/local/lib"
-  "/usr/local/include/libsbp"
+  "/usr/local/include"
   "../lib"
   )
 
@@ -20,7 +20,7 @@ set(CMAKE_TARGET_LINKED_INFO_FILES
   "/home/pi/mamboProject/build/CMakeFiles/COMPASS.dir/DependInfo.cmake"
   "/home/pi/mamboProject/build/CMakeFiles/ADXL345.dir/DependInfo.cmake"
   "/home/pi/mamboProject/build/CMakeFiles/HMC5843.dir/DependInfo.cmake"
-  "/home/pi/mamboProject/build/CMakeFiles/DISTANCE.dir/DependInfo.cmake"
+  "/home/pi/mamboProject/build/CMakeFiles/RELATIVE_DISTANCE.dir/DependInfo.cmake"
   )
 
 # Fortran module output directory.

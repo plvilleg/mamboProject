@@ -3,4 +3,6 @@
 
 CMakeFiles/ADXL345.dir/lib/ADXL345.cpp.o: ../lib/ADXL345.cpp
 CMakeFiles/ADXL345.dir/lib/ADXL345.cpp.o: ../lib/ADXL345.h
+CMakeFiles/ADXL345.dir/lib/ADXL345.cpp.o: /usr/local/include/wiringPi.h
+CMakeFiles/ADXL345.dir/lib/ADXL345.cpp.o: /usr/local/include/wiringPiI2C.h
 

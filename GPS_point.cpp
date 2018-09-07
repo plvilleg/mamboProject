@@ -11,7 +11,6 @@
 #include <time.h>
 
 // Special libraries 
-#include <armadillo>
 #include "COMPASS.h"
 #include "RELATIVE_DISTANCE.h"
 #include "config.h"
@@ -26,19 +25,11 @@ extern "C" {
 
 // /g++ testCompass.cpp compass.cpp HMC5843.cpp ADXL345.cpp -o testcompass -O2 -lwiringPi -larmadillo
 
-/////////////////////////////////////////////////////////////////////////////////
-// Definitions
-
-#define _USE_MATH_DEFINES
-#define ARMA_DONT_PRINT_ERRORS
-
-//
-/////////////////////////////////////////////////////////////////////////////////
 
 /////////////////////////////////////////////////////////////////////////////////
 // Variables
 using namespace std;
-using namespace arma;
+
 
 const float PI = (atan(1)*4); 
 
@@ -278,13 +269,13 @@ int main(int argc, char **argv)
 		printf("Piksi succesfull configured..!\n");
 	#endif
 	
-	compass.init();
+	comp.init();
 	dist.init();
 
 	// Set the position of the speakers
-	distance.setSpeaker_1(c1X,c1Y); 
-	distance.setSpeaker_2(c2X,c2X);
-	distance.setSpeaker_3(c3X,c3X);
+	dist.setSpeaker_1(c1X,c1Y); 
+	dist.setSpeaker_2(c2X,c2X);
+	dist.setSpeaker_3(c3X,c3X);
 	
 	printf("Configuration successfull..!\n");
 	

@@ -1,2 +1,0 @@
-/usr/bin/ar qc libDISTANCE.a  CMakeFiles/DISTANCE.dir/lib/RELATIVE_DISTANCE.cpp.o
-/usr/bin/ranlib libDISTANCE.a

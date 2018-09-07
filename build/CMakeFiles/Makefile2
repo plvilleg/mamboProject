@@ -97,6 +97,46 @@ clean: CMakeFiles/COMPASS.dir/clean
 .PHONY : clean
 
 #=============================================================================
+# Target rules for target CMakeFiles/TestGPS_point.dir
+
+# All Build rule for target.
+CMakeFiles/TestGPS_point.dir/all: CMakeFiles/COMPASS.dir/all
+CMakeFiles/TestGPS_point.dir/all: CMakeFiles/ADXL345.dir/all
+CMakeFiles/TestGPS_point.dir/all: CMakeFiles/HMC5843.dir/all
+CMakeFiles/TestGPS_point.dir/all: CMakeFiles/RELATIVE_DISTANCE.dir/all
+	$(MAKE) -f CMakeFiles/TestGPS_point.dir/build.make CMakeFiles/TestGPS_point.dir/depend
+	$(MAKE) -f CMakeFiles/TestGPS_point.dir/build.make CMakeFiles/TestGPS_point.dir/build
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --progress-dir=/home/pi/mamboProject/build/CMakeFiles --progress-num=9,10 "Built target TestGPS_point"
+.PHONY : CMakeFiles/TestGPS_point.dir/all
+
+# Include target in all.
+all: CMakeFiles/TestGPS_point.dir/all
+
+.PHONY : all
+
+# Build rule for subdir invocation for target.
+CMakeFiles/TestGPS_point.dir/rule: cmake_check_build_system
+	$(CMAKE_COMMAND) -E cmake_progress_start /home/pi/mamboProject/build/CMakeFiles 10
+	$(MAKE) -f CMakeFiles/Makefile2 CMakeFiles/TestGPS_point.dir/all
+	$(CMAKE_COMMAND) -E cmake_progress_start /home/pi/mamboProject/build/CMakeFiles 0
+.PHONY : CMakeFiles/TestGPS_point.dir/rule
+
+# Convenience name for target.
+TestGPS_point: CMakeFiles/TestGPS_point.dir/rule
+
+.PHONY : TestGPS_point
+
+# clean rule for target.
+CMakeFiles/TestGPS_point.dir/clean:
+	$(MAKE) -f CMakeFiles/TestGPS_point.dir/build.make CMakeFiles/TestGPS_point.dir/clean
+.PHONY : CMakeFiles/TestGPS_point.dir/clean
+
+# clean rule for target.
+clean: CMakeFiles/TestGPS_point.dir/clean
+
+.PHONY : clean
+
+#=============================================================================
 # Target rules for target CMakeFiles/ADXL345.dir
 
 # All Build rule for target.
@@ -140,7 +180,7 @@ clean: CMakeFiles/ADXL345.dir/clean
 CMakeFiles/HMC5843.dir/all:
 	$(MAKE) -f CMakeFiles/HMC5843.dir/build.make CMakeFiles/HMC5843.dir/depend
 	$(MAKE) -f CMakeFiles/HMC5843.dir/build.make CMakeFiles/HMC5843.dir/build
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --progress-dir=/home/pi/mamboProject/build/CMakeFiles --progress-num=7,8 "Built target HMC5843"
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --progress-dir=/home/pi/mamboProject/build/CMakeFiles --progress-num=5,6 "Built target HMC5843"
 .PHONY : CMakeFiles/HMC5843.dir/all
 
 # Include target in all.
@@ -171,79 +211,39 @@ clean: CMakeFiles/HMC5843.dir/clean
 .PHONY : clean
 
 #=============================================================================
-# Target rules for target CMakeFiles/TestGPS_point.dir
+# Target rules for target CMakeFiles/RELATIVE_DISTANCE.dir
 
 # All Build rule for target.
-CMakeFiles/TestGPS_point.dir/all: CMakeFiles/ADXL345.dir/all
-CMakeFiles/TestGPS_point.dir/all: CMakeFiles/DISTANCE.dir/all
-CMakeFiles/TestGPS_point.dir/all: CMakeFiles/HMC5843.dir/all
-CMakeFiles/TestGPS_point.dir/all: CMakeFiles/COMPASS.dir/all
-	$(MAKE) -f CMakeFiles/TestGPS_point.dir/build.make CMakeFiles/TestGPS_point.dir/depend
-	$(MAKE) -f CMakeFiles/TestGPS_point.dir/build.make CMakeFiles/TestGPS_point.dir/build
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --progress-dir=/home/pi/mamboProject/build/CMakeFiles --progress-num=9,10 "Built target TestGPS_point"
-.PHONY : CMakeFiles/TestGPS_point.dir/all
+CMakeFiles/RELATIVE_DISTANCE.dir/all:
+	$(MAKE) -f CMakeFiles/RELATIVE_DISTANCE.dir/build.make CMakeFiles/RELATIVE_DISTANCE.dir/depend
+	$(MAKE) -f CMakeFiles/RELATIVE_DISTANCE.dir/build.make CMakeFiles/RELATIVE_DISTANCE.dir/build
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --progress-dir=/home/pi/mamboProject/build/CMakeFiles --progress-num=7,8 "Built target RELATIVE_DISTANCE"
+.PHONY : CMakeFiles/RELATIVE_DISTANCE.dir/all
 
 # Include target in all.
-all: CMakeFiles/TestGPS_point.dir/all
+all: CMakeFiles/RELATIVE_DISTANCE.dir/all
 
 .PHONY : all
 
 # Build rule for subdir invocation for target.
-CMakeFiles/TestGPS_point.dir/rule: cmake_check_build_system
-	$(CMAKE_COMMAND) -E cmake_progress_start /home/pi/mamboProject/build/CMakeFiles 10
-	$(MAKE) -f CMakeFiles/Makefile2 CMakeFiles/TestGPS_point.dir/all
-	$(CMAKE_COMMAND) -E cmake_progress_start /home/pi/mamboProject/build/CMakeFiles 0
-.PHONY : CMakeFiles/TestGPS_point.dir/rule
-
-# Convenience name for target.
-TestGPS_point: CMakeFiles/TestGPS_point.dir/rule
-
-.PHONY : TestGPS_point
-
-# clean rule for target.
-CMakeFiles/TestGPS_point.dir/clean:
-	$(MAKE) -f CMakeFiles/TestGPS_point.dir/build.make CMakeFiles/TestGPS_point.dir/clean
-.PHONY : CMakeFiles/TestGPS_point.dir/clean
-
-# clean rule for target.
-clean: CMakeFiles/TestGPS_point.dir/clean
-
-.PHONY : clean
-
-#=============================================================================
-# Target rules for target CMakeFiles/DISTANCE.dir
-
-# All Build rule for target.
-CMakeFiles/DISTANCE.dir/all:
-	$(MAKE) -f CMakeFiles/DISTANCE.dir/build.make CMakeFiles/DISTANCE.dir/depend
-	$(MAKE) -f CMakeFiles/DISTANCE.dir/build.make CMakeFiles/DISTANCE.dir/build
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --progress-dir=/home/pi/mamboProject/build/CMakeFiles --progress-num=5,6 "Built target DISTANCE"
-.PHONY : CMakeFiles/DISTANCE.dir/all
-
-# Include target in all.
-all: CMakeFiles/DISTANCE.dir/all
-
-.PHONY : all
-
-# Build rule for subdir invocation for target.
-CMakeFiles/DISTANCE.dir/rule: cmake_check_build_system
+CMakeFiles/RELATIVE_DISTANCE.dir/rule: cmake_check_build_system
 	$(CMAKE_COMMAND) -E cmake_progress_start /home/pi/mamboProject/build/CMakeFiles 2
-	$(MAKE) -f CMakeFiles/Makefile2 CMakeFiles/DISTANCE.dir/all
+	$(MAKE) -f CMakeFiles/Makefile2 CMakeFiles/RELATIVE_DISTANCE.dir/all
 	$(CMAKE_COMMAND) -E cmake_progress_start /home/pi/mamboProject/build/CMakeFiles 0
-.PHONY : CMakeFiles/DISTANCE.dir/rule
+.PHONY : CMakeFiles/RELATIVE_DISTANCE.dir/rule
 
 # Convenience name for target.
-DISTANCE: CMakeFiles/DISTANCE.dir/rule
+RELATIVE_DISTANCE: CMakeFiles/RELATIVE_DISTANCE.dir/rule
 
-.PHONY : DISTANCE
-
-# clean rule for target.
-CMakeFiles/DISTANCE.dir/clean:
-	$(MAKE) -f CMakeFiles/DISTANCE.dir/build.make CMakeFiles/DISTANCE.dir/clean
-.PHONY : CMakeFiles/DISTANCE.dir/clean
+.PHONY : RELATIVE_DISTANCE
 
 # clean rule for target.
-clean: CMakeFiles/DISTANCE.dir/clean
+CMakeFiles/RELATIVE_DISTANCE.dir/clean:
+	$(MAKE) -f CMakeFiles/RELATIVE_DISTANCE.dir/build.make CMakeFiles/RELATIVE_DISTANCE.dir/clean
+.PHONY : CMakeFiles/RELATIVE_DISTANCE.dir/clean
+
+# clean rule for target.
+clean: CMakeFiles/RELATIVE_DISTANCE.dir/clean
 
 .PHONY : clean
 

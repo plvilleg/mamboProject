@@ -6,14 +6,14 @@ set(LogSubmarine_VERSION_MINOR 0)
 
 set(CMAKE_MODULE_PATH "${CMAKE_SOURCE_DIR}/cmake")
 
-if(NOT CMAKE_VERSION VERSION_LESS 3.1)
-	set(CMAKE_CXX_STANDARD 11)
-else()
-	set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11")
-endif()
+#if(NOT CMAKE_VERSION VERSION_LESS 3.1)
+#	set(CMAKE_CXX_STANDARD 11)
+#else()
+	set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=gnu99")   #-std=c++11")
+#endif()
 
 
-set(GCC_ARMADILLO_FLAGS "-O2  -I /home/pi/armadillo-8.600.0/include/ -DARMA_DONT_USE_WRAPPER -lblas -llapack")
+set(GCC_ARMADILLO_FLAGS "-O2  -I /home/pi/armadillo-8.600.0/include/ -DARMA_DONT_USE_WRAPPER -lblas -llapack -lgfortran")
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${GCC_ARMADILLO_FLAGS} -Wall -Wextra -pedantic -pthread -g -O0 -fprofile-arcs -ftest-coverage")
 
 
@@ -36,12 +36,13 @@ include_directories("/usr/local/lib/")
 
 
 #SBP
-include_directories("/usr/local/include/libsbp")
+link_directories("/usr/local/lib/")
+include_directories("/usr/local/include/")
 
 
 #armadillo  
-find_package(Armadillo)
-include_directories(${ARMADILLO_INCLUDE-DIRS})
+#find_package(Armadillo)
+#include_directories(${ARMADILLO_INCLUDE-DIRS})
 
 
 #ADXL345
@@ -58,13 +59,13 @@ add_library(HMC5843 /home/pi/mamboProject/lib/HMC5843.cpp)
 
 #DISTANCE g++ example1.cpp -o example1 -O2 -larmadillo -lgfortran  LIB_FLAGS = -larmadillo -lgfortran
 include_directories("/home/pi/mamboProject/lib/")
-add_library(DISTANCE /home/pi/mamboProject/lib/RELATIVE_DISTANCE.cpp)
+add_library(RELATIVE_DISTANCE /home/pi/mamboProject/lib/RELATIVE_DISTANCE.cpp)
 
 
 #COMPASS
 link_directories("/home/pi/mamboProject/")
 include_directories("/home/pi/mamboProject/lib/")
-add_library(COMPASS /home/pi/mamboProject/lib/compass.cpp)
+add_library(COMPASS /home/pi/mamboProject/lib/COMPASS.cpp)
 
 
 #ITG3205
@@ -73,4 +74,4 @@ add_library(COMPASS /home/pi/mamboProject/lib/compass.cpp)
 #add_library(ITG3205 /home/pi/submarino/lib/ITG3205.cpp)
 
 
-target_link_libraries(TestGPS_point ${ARMADILLO_LIBRARIES} wiringPi COMPASS ADXL345 HMC5843 DISTANCE serialport sbp ${M_LIB})
+target_link_libraries(TestGPS_point wiringPi COMPASS ADXL345 HMC5843 RELATIVE_DISTANCE serialport sbp ${M_LIB})

@@ -4,3 +4,5 @@
 CMakeFiles/HMC5843.dir/lib/HMC5843.cpp.o
  /home/pi/mamboProject/lib/HMC5843.cpp
  /home/pi/mamboProject/lib/HMC5843.h
+ /usr/local/include/wiringPi.h
+ /usr/local/include/wiringPiI2C.h

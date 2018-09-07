@@ -124,6 +124,19 @@ COMPASS/fast:
 .PHONY : COMPASS/fast
 
 #=============================================================================
+# Target rules for targets named TestGPS_point
+
+# Build rule for target.
+TestGPS_point: cmake_check_build_system
+	$(MAKE) -f CMakeFiles/Makefile2 TestGPS_point
+.PHONY : TestGPS_point
+
+# fast build rule for target.
+TestGPS_point/fast:
+	$(MAKE) -f CMakeFiles/TestGPS_point.dir/build.make CMakeFiles/TestGPS_point.dir/build
+.PHONY : TestGPS_point/fast
+
+#=============================================================================
 # Target rules for targets named ADXL345
 
 # Build rule for target.
@@ -150,30 +163,17 @@ HMC5843/fast:
 .PHONY : HMC5843/fast
 
 #=============================================================================
-# Target rules for targets named TestGPS_point
+# Target rules for targets named RELATIVE_DISTANCE
 
 # Build rule for target.
-TestGPS_point: cmake_check_build_system
-	$(MAKE) -f CMakeFiles/Makefile2 TestGPS_point
-.PHONY : TestGPS_point
+RELATIVE_DISTANCE: cmake_check_build_system
+	$(MAKE) -f CMakeFiles/Makefile2 RELATIVE_DISTANCE
+.PHONY : RELATIVE_DISTANCE
 
 # fast build rule for target.
-TestGPS_point/fast:
-	$(MAKE) -f CMakeFiles/TestGPS_point.dir/build.make CMakeFiles/TestGPS_point.dir/build
-.PHONY : TestGPS_point/fast
-
-#=============================================================================
-# Target rules for targets named DISTANCE
-
-# Build rule for target.
-DISTANCE: cmake_check_build_system
-	$(MAKE) -f CMakeFiles/Makefile2 DISTANCE
-.PHONY : DISTANCE
-
-# fast build rule for target.
-DISTANCE/fast:
-	$(MAKE) -f CMakeFiles/DISTANCE.dir/build.make CMakeFiles/DISTANCE.dir/build
-.PHONY : DISTANCE/fast
+RELATIVE_DISTANCE/fast:
+	$(MAKE) -f CMakeFiles/RELATIVE_DISTANCE.dir/build.make CMakeFiles/RELATIVE_DISTANCE.dir/build
+.PHONY : RELATIVE_DISTANCE/fast
 
 GPS_point.o: GPS_point.cpp.o
 
@@ -229,6 +229,33 @@ lib/ADXL345.cpp.s:
 	$(MAKE) -f CMakeFiles/ADXL345.dir/build.make CMakeFiles/ADXL345.dir/lib/ADXL345.cpp.s
 .PHONY : lib/ADXL345.cpp.s
 
+lib/COMPASS.o: lib/COMPASS.cpp.o
+
+.PHONY : lib/COMPASS.o
+
+# target to build an object file
+lib/COMPASS.cpp.o:
+	$(MAKE) -f CMakeFiles/COMPASS.dir/build.make CMakeFiles/COMPASS.dir/lib/COMPASS.cpp.o
+.PHONY : lib/COMPASS.cpp.o
+
+lib/COMPASS.i: lib/COMPASS.cpp.i
+
+.PHONY : lib/COMPASS.i
+
+# target to preprocess a source file
+lib/COMPASS.cpp.i:
+	$(MAKE) -f CMakeFiles/COMPASS.dir/build.make CMakeFiles/COMPASS.dir/lib/COMPASS.cpp.i
+.PHONY : lib/COMPASS.cpp.i
+
+lib/COMPASS.s: lib/COMPASS.cpp.s
+
+.PHONY : lib/COMPASS.s
+
+# target to generate assembly for a file
+lib/COMPASS.cpp.s:
+	$(MAKE) -f CMakeFiles/COMPASS.dir/build.make CMakeFiles/COMPASS.dir/lib/COMPASS.cpp.s
+.PHONY : lib/COMPASS.cpp.s
+
 lib/HMC5843.o: lib/HMC5843.cpp.o
 
 .PHONY : lib/HMC5843.o
@@ -262,7 +289,7 @@ lib/RELATIVE_DISTANCE.o: lib/RELATIVE_DISTANCE.cpp.o
 
 # target to build an object file
 lib/RELATIVE_DISTANCE.cpp.o:
-	$(MAKE) -f CMakeFiles/DISTANCE.dir/build.make CMakeFiles/DISTANCE.dir/lib/RELATIVE_DISTANCE.cpp.o
+	$(MAKE) -f CMakeFiles/RELATIVE_DISTANCE.dir/build.make CMakeFiles/RELATIVE_DISTANCE.dir/lib/RELATIVE_DISTANCE.cpp.o
 .PHONY : lib/RELATIVE_DISTANCE.cpp.o
 
 lib/RELATIVE_DISTANCE.i: lib/RELATIVE_DISTANCE.cpp.i
@@ -271,7 +298,7 @@ lib/RELATIVE_DISTANCE.i: lib/RELATIVE_DISTANCE.cpp.i
 
 # target to preprocess a source file
 lib/RELATIVE_DISTANCE.cpp.i:
-	$(MAKE) -f CMakeFiles/DISTANCE.dir/build.make CMakeFiles/DISTANCE.dir/lib/RELATIVE_DISTANCE.cpp.i
+	$(MAKE) -f CMakeFiles/RELATIVE_DISTANCE.dir/build.make CMakeFiles/RELATIVE_DISTANCE.dir/lib/RELATIVE_DISTANCE.cpp.i
 .PHONY : lib/RELATIVE_DISTANCE.cpp.i
 
 lib/RELATIVE_DISTANCE.s: lib/RELATIVE_DISTANCE.cpp.s
@@ -280,35 +307,8 @@ lib/RELATIVE_DISTANCE.s: lib/RELATIVE_DISTANCE.cpp.s
 
 # target to generate assembly for a file
 lib/RELATIVE_DISTANCE.cpp.s:
-	$(MAKE) -f CMakeFiles/DISTANCE.dir/build.make CMakeFiles/DISTANCE.dir/lib/RELATIVE_DISTANCE.cpp.s
+	$(MAKE) -f CMakeFiles/RELATIVE_DISTANCE.dir/build.make CMakeFiles/RELATIVE_DISTANCE.dir/lib/RELATIVE_DISTANCE.cpp.s
 .PHONY : lib/RELATIVE_DISTANCE.cpp.s
-
-lib/compass.o: lib/compass.cpp.o
-
-.PHONY : lib/compass.o
-
-# target to build an object file
-lib/compass.cpp.o:
-	$(MAKE) -f CMakeFiles/COMPASS.dir/build.make CMakeFiles/COMPASS.dir/lib/compass.cpp.o
-.PHONY : lib/compass.cpp.o
-
-lib/compass.i: lib/compass.cpp.i
-
-.PHONY : lib/compass.i
-
-# target to preprocess a source file
-lib/compass.cpp.i:
-	$(MAKE) -f CMakeFiles/COMPASS.dir/build.make CMakeFiles/COMPASS.dir/lib/compass.cpp.i
-.PHONY : lib/compass.cpp.i
-
-lib/compass.s: lib/compass.cpp.s
-
-.PHONY : lib/compass.s
-
-# target to generate assembly for a file
-lib/compass.cpp.s:
-	$(MAKE) -f CMakeFiles/COMPASS.dir/build.make CMakeFiles/COMPASS.dir/lib/compass.cpp.s
-.PHONY : lib/compass.cpp.s
 
 # Help Target
 help:
@@ -317,27 +317,27 @@ help:
 	@echo "... clean"
 	@echo "... depend"
 	@echo "... rebuild_cache"
-	@echo "... edit_cache"
 	@echo "... COMPASS"
+	@echo "... TestGPS_point"
 	@echo "... ADXL345"
 	@echo "... HMC5843"
-	@echo "... TestGPS_point"
-	@echo "... DISTANCE"
+	@echo "... edit_cache"
+	@echo "... RELATIVE_DISTANCE"
 	@echo "... GPS_point.o"
 	@echo "... GPS_point.i"
 	@echo "... GPS_point.s"
 	@echo "... lib/ADXL345.o"
 	@echo "... lib/ADXL345.i"
 	@echo "... lib/ADXL345.s"
+	@echo "... lib/COMPASS.o"
+	@echo "... lib/COMPASS.i"
+	@echo "... lib/COMPASS.s"
 	@echo "... lib/HMC5843.o"
 	@echo "... lib/HMC5843.i"
 	@echo "... lib/HMC5843.s"
 	@echo "... lib/RELATIVE_DISTANCE.o"
 	@echo "... lib/RELATIVE_DISTANCE.i"
 	@echo "... lib/RELATIVE_DISTANCE.s"
-	@echo "... lib/compass.o"
-	@echo "... lib/compass.i"
-	@echo "... lib/compass.s"
 .PHONY : help
 
 

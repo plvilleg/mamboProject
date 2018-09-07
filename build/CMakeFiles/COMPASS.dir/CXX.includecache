@@ -28,6 +28,24 @@ math.h
 stdint.h
 -
 
+/home/pi/mamboProject/lib/COMPASS.cpp
+iostream
+-
+errno.h
+-
+cmath
+-
+unistd.h
+-
+armadillo
+-
+COMPASS.h
+/home/pi/mamboProject/lib/COMPASS.h
+iostream
+-
+string
+-
+
 /home/pi/mamboProject/lib/COMPASS.h
 iostream
 -
@@ -66,23 +84,9 @@ math.h
 stdint.h
 -
 
-/home/pi/mamboProject/lib/compass.cpp
-iostream
--
-errno.h
--
-cmath
--
-unistd.h
--
-armadillo
--
-COMPASS.h
-/home/pi/mamboProject/lib/COMPASS.h
-iostream
--
-string
--
-
 /home/pi/mamboProject/lib/config.h
+
+/usr/local/include/wiringPi.h
+
+/usr/local/include/wiringPiI2C.h
 

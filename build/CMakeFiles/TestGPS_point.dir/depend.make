@@ -7,4 +7,12 @@ CMakeFiles/TestGPS_point.dir/GPS_point.cpp.o: ../lib/HMC5843.h
 CMakeFiles/TestGPS_point.dir/GPS_point.cpp.o: ../lib/RELATIVE_DISTANCE.h
 CMakeFiles/TestGPS_point.dir/GPS_point.cpp.o: ../lib/config.h
 CMakeFiles/TestGPS_point.dir/GPS_point.cpp.o: ../GPS_point.cpp
+CMakeFiles/TestGPS_point.dir/GPS_point.cpp.o: /usr/local/include/libsbp/common.h
+CMakeFiles/TestGPS_point.dir/GPS_point.cpp.o: /usr/local/include/libsbp/gnss.h
+CMakeFiles/TestGPS_point.dir/GPS_point.cpp.o: /usr/local/include/libsbp/navigation.h
+CMakeFiles/TestGPS_point.dir/GPS_point.cpp.o: /usr/local/include/libsbp/piksi.h
+CMakeFiles/TestGPS_point.dir/GPS_point.cpp.o: /usr/local/include/libsbp/sbp.h
+CMakeFiles/TestGPS_point.dir/GPS_point.cpp.o: /usr/local/include/libsbp/system.h
+CMakeFiles/TestGPS_point.dir/GPS_point.cpp.o: /usr/local/include/wiringPi.h
+CMakeFiles/TestGPS_point.dir/GPS_point.cpp.o: /usr/local/include/wiringPiI2C.h
 

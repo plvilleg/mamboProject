@@ -20,16 +20,16 @@
 //#define HpresicionCalMode
 
 // Speaker 1 coordinates
-#define c1X 0f
-#define c1Y 1f
+#define c1X 0
+#define c1Y 1
 
 // Speaker 1 coordinates
-#define c2X 0.988f
-#define c2Y 0.1542f
+#define c2X 0.988
+#define c2Y 0.1542
 
 // Speaker 1 coordinates
-#define c3X -0.988f
-#define c3Y -0.1542f
+#define c3X -0.988
+#define c3Y -0.1542
 
 
 #endif

@@ -1,5 +1,5 @@
 file(REMOVE_RECURSE
-  "CMakeFiles/COMPASS.dir/lib/compass.cpp.o"
+  "CMakeFiles/COMPASS.dir/lib/COMPASS.cpp.o"
   "libCOMPASS.pdb"
   "libCOMPASS.a"
 )

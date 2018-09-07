@@ -4,14 +4,14 @@ set(CMAKE_DEPENDS_LANGUAGES
   )
 # The set of files for implicit dependencies of each language:
 set(CMAKE_DEPENDS_CHECK_CXX
-  "/home/pi/mamboProject/lib/RELATIVE_DISTANCE.cpp" "/home/pi/mamboProject/build/CMakeFiles/DISTANCE.dir/lib/RELATIVE_DISTANCE.cpp.o"
+  "/home/pi/mamboProject/lib/RELATIVE_DISTANCE.cpp" "/home/pi/mamboProject/build/CMakeFiles/RELATIVE_DISTANCE.dir/lib/RELATIVE_DISTANCE.cpp.o"
   )
 set(CMAKE_CXX_COMPILER_ID "GNU")
 
 # The include file search paths:
 set(CMAKE_CXX_TARGET_INCLUDE_PATH
   "/usr/local/lib"
-  "/usr/local/include/libsbp"
+  "/usr/local/include"
   "../lib"
   )
 

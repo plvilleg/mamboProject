@@ -57,38 +57,38 @@ include CMakeFiles/COMPASS.dir/progress.make
 # Include the compile flags for this target's objects.
 include CMakeFiles/COMPASS.dir/flags.make
 
-CMakeFiles/COMPASS.dir/lib/compass.cpp.o: CMakeFiles/COMPASS.dir/flags.make
-CMakeFiles/COMPASS.dir/lib/compass.cpp.o: ../lib/compass.cpp
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/home/pi/mamboProject/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_1) "Building CXX object CMakeFiles/COMPASS.dir/lib/compass.cpp.o"
-	/usr/bin/c++   $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -o CMakeFiles/COMPASS.dir/lib/compass.cpp.o -c /home/pi/mamboProject/lib/compass.cpp
+CMakeFiles/COMPASS.dir/lib/COMPASS.cpp.o: CMakeFiles/COMPASS.dir/flags.make
+CMakeFiles/COMPASS.dir/lib/COMPASS.cpp.o: ../lib/COMPASS.cpp
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/home/pi/mamboProject/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_1) "Building CXX object CMakeFiles/COMPASS.dir/lib/COMPASS.cpp.o"
+	/usr/bin/c++   $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -o CMakeFiles/COMPASS.dir/lib/COMPASS.cpp.o -c /home/pi/mamboProject/lib/COMPASS.cpp
 
-CMakeFiles/COMPASS.dir/lib/compass.cpp.i: cmake_force
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Preprocessing CXX source to CMakeFiles/COMPASS.dir/lib/compass.cpp.i"
-	/usr/bin/c++  $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /home/pi/mamboProject/lib/compass.cpp > CMakeFiles/COMPASS.dir/lib/compass.cpp.i
+CMakeFiles/COMPASS.dir/lib/COMPASS.cpp.i: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Preprocessing CXX source to CMakeFiles/COMPASS.dir/lib/COMPASS.cpp.i"
+	/usr/bin/c++  $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /home/pi/mamboProject/lib/COMPASS.cpp > CMakeFiles/COMPASS.dir/lib/COMPASS.cpp.i
 
-CMakeFiles/COMPASS.dir/lib/compass.cpp.s: cmake_force
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Compiling CXX source to assembly CMakeFiles/COMPASS.dir/lib/compass.cpp.s"
-	/usr/bin/c++  $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /home/pi/mamboProject/lib/compass.cpp -o CMakeFiles/COMPASS.dir/lib/compass.cpp.s
+CMakeFiles/COMPASS.dir/lib/COMPASS.cpp.s: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Compiling CXX source to assembly CMakeFiles/COMPASS.dir/lib/COMPASS.cpp.s"
+	/usr/bin/c++  $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /home/pi/mamboProject/lib/COMPASS.cpp -o CMakeFiles/COMPASS.dir/lib/COMPASS.cpp.s
 
-CMakeFiles/COMPASS.dir/lib/compass.cpp.o.requires:
+CMakeFiles/COMPASS.dir/lib/COMPASS.cpp.o.requires:
 
-.PHONY : CMakeFiles/COMPASS.dir/lib/compass.cpp.o.requires
+.PHONY : CMakeFiles/COMPASS.dir/lib/COMPASS.cpp.o.requires
 
-CMakeFiles/COMPASS.dir/lib/compass.cpp.o.provides: CMakeFiles/COMPASS.dir/lib/compass.cpp.o.requires
-	$(MAKE) -f CMakeFiles/COMPASS.dir/build.make CMakeFiles/COMPASS.dir/lib/compass.cpp.o.provides.build
-.PHONY : CMakeFiles/COMPASS.dir/lib/compass.cpp.o.provides
+CMakeFiles/COMPASS.dir/lib/COMPASS.cpp.o.provides: CMakeFiles/COMPASS.dir/lib/COMPASS.cpp.o.requires
+	$(MAKE) -f CMakeFiles/COMPASS.dir/build.make CMakeFiles/COMPASS.dir/lib/COMPASS.cpp.o.provides.build
+.PHONY : CMakeFiles/COMPASS.dir/lib/COMPASS.cpp.o.provides
 
-CMakeFiles/COMPASS.dir/lib/compass.cpp.o.provides.build: CMakeFiles/COMPASS.dir/lib/compass.cpp.o
+CMakeFiles/COMPASS.dir/lib/COMPASS.cpp.o.provides.build: CMakeFiles/COMPASS.dir/lib/COMPASS.cpp.o
 
 
 # Object files for target COMPASS
 COMPASS_OBJECTS = \
-"CMakeFiles/COMPASS.dir/lib/compass.cpp.o"
+"CMakeFiles/COMPASS.dir/lib/COMPASS.cpp.o"
 
 # External object files for target COMPASS
 COMPASS_EXTERNAL_OBJECTS =
 
-libCOMPASS.a: CMakeFiles/COMPASS.dir/lib/compass.cpp.o
+libCOMPASS.a: CMakeFiles/COMPASS.dir/lib/COMPASS.cpp.o
 libCOMPASS.a: CMakeFiles/COMPASS.dir/build.make
 libCOMPASS.a: CMakeFiles/COMPASS.dir/link.txt
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --bold --progress-dir=/home/pi/mamboProject/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_2) "Linking CXX static library libCOMPASS.a"
@@ -100,7 +100,7 @@ CMakeFiles/COMPASS.dir/build: libCOMPASS.a
 
 .PHONY : CMakeFiles/COMPASS.dir/build
 
-CMakeFiles/COMPASS.dir/requires: CMakeFiles/COMPASS.dir/lib/compass.cpp.o.requires
+CMakeFiles/COMPASS.dir/requires: CMakeFiles/COMPASS.dir/lib/COMPASS.cpp.o.requires
 
 .PHONY : CMakeFiles/COMPASS.dir/requires
 

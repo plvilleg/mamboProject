@@ -30,7 +30,7 @@ public:
 
 	Speaker sp1, sp2, sp3;
 
-	mat relative_dist;
+	arma::mat relative_dist;
 	
 	
 	RelativeDistace()
@@ -48,7 +48,7 @@ public:
 	
 private: 
 	
-	mat leastSqueare(double x1,double y1,double x2,double y2,double x3,double y3,double a,double b,double c);
+	arma::mat leastSqueare(double x1,double y1,double x2,double y2,double x3,double y3,double a,double b,double c);
 
 
 };

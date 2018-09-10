@@ -6,8 +6,15 @@
 #include "HMC5843.h"
 #include "ADXL345.h"
 #include "config.h"
-#include <unistd.h>
+
 #include <armadillo>
+#include <unistd.h>
+
+using namespace std;
+using namespace arma;
+
+//#define ARMA_U8_TYPE 1
+//#define ARMA_S8_TYPE 1
 
 #define ALPHA 0.5
 
@@ -61,16 +68,14 @@ public:
 	Raw accelRAW;
 	Raw magRAW;
 
-	//Vector magAxis;
-	
-	void init();
+	void init(void);
 	bool Calibrate(uint8_t gain, uint8_t n_samples);
-	void getOffset();
+	void getOffset(void);
 	void setup_Compass(void);
 	
 	void read_Accel_Mag(void);
 
-	void calibrateAccel();
+	void calibrateAccel(void);
 	AccelG read_AccelG(void);
 
 	AccelRotation readPitchRoll(void);

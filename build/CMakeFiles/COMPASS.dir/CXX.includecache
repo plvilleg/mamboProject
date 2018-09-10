@@ -37,8 +37,6 @@ cmath
 -
 unistd.h
 -
-armadillo
--
 COMPASS.h
 /home/pi/mamboProject/lib/COMPASS.h
 iostream
@@ -57,9 +55,9 @@ ADXL345.h
 /home/pi/mamboProject/lib/ADXL345.h
 config.h
 /home/pi/mamboProject/lib/config.h
-unistd.h
--
 armadillo
+-
+unistd.h
 -
 
 /home/pi/mamboProject/lib/HMC5843.h

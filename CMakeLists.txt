@@ -41,8 +41,8 @@ include_directories("/usr/local/include/")
 
 
 #armadillo  
-#find_package(Armadillo)
-#include_directories(${ARMADILLO_INCLUDE-DIRS})
+find_package(Armadillo)
+include_directories(${ARMADILLO_INCLUDE-DIRS})
 
 
 #ADXL345
@@ -74,4 +74,4 @@ add_library(COMPASS /home/pi/mamboProject/lib/COMPASS.cpp)
 #add_library(ITG3205 /home/pi/submarino/lib/ITG3205.cpp)
 
 
-target_link_libraries(TestGPS_point wiringPi COMPASS ADXL345 HMC5843 RELATIVE_DISTANCE serialport sbp ${M_LIB})
+target_link_libraries(TestGPS_point wiringPi COMPASS ADXL345 HMC5843 RELATIVE_DISTANCE ${ARMADILLO_LIBRARY} serialport sbp ${M_LIB})

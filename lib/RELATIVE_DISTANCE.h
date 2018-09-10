@@ -8,8 +8,9 @@
 #include <unistd.h>
 #include <time.h>
 #include <fstream>
-#include <armadillo>
+
 #include "config.h"
+#include <armadillo>
 
 using namespace arma;
 
@@ -21,8 +22,6 @@ struct Speaker
 	float Y;	
 };
 #endif
-
-
 
 class RelativeDistace
 {

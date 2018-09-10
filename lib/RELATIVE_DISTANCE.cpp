@@ -7,9 +7,6 @@
 #include <cmath>
 #include <fstream>
 
-using namespace std;
-using namespace arma;
-
 
 void RelativeDistace::init(void){
 	#if (DEBUG_MODE > 0)
@@ -75,9 +72,9 @@ double RelativeDistace::relative_distance(double Ta, double Tb, double Tc, doubl
 //int x1,int y1,int x2,int y2,int x3,int y3,int a,int b,int c,int xc,int yc
 mat RelativeDistace::leastSqueare(double x1,double y1,double x2,double y2,double x3,double y3,double a,double b,double c)
 {
-	mat A(2,2); 
-	mat B(2,1);
-	mat R(2,1);
+	arma::mat A(2,2); 
+	arma::mat B(2,1);
+	arma::mat R(2,1);
 
 	A.ones();
 	B.ones();

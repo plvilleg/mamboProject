@@ -2,15 +2,16 @@
 #include <errno.h>
 #include <cmath>
 #include <unistd.h>
-#include <armadillo>
+
 #include "COMPASS.h"
 #include <iostream>
 #include <string>
 #define _USE_MATH_DEFINES
 //g++ compass.cpp  HMC5843.cpp ADXL345.cpp -o compass -O2 -lwiringPi -larmadillo
 
-using namespace std;
-using namespace arma;
+
+//using namespace arma;
+
 
 const float PI = (atan(1)*4);
 
@@ -25,7 +26,7 @@ const int16_t counts_per_milligaus[8] = {
 	280
 };
 
-void COMPASS::init(){
+void COMPASS::init(void){
 	
 	//Mag variales
 	x_scale = 1.0f;
@@ -43,11 +44,7 @@ void COMPASS::init(){
 	_yoffset = 0;
 	_zoffset = 0;//0.03577027;
 
-
-	
 	setup_Compass();
-
-	
 	
 	printf("Calibrating compass.\n");
 
@@ -69,7 +66,7 @@ void COMPASS::init(){
 }
 
 
-void COMPASS::setup_Compass(){
+void COMPASS::setup_Compass(void){
 
 	cout<<"Starting Compass..!"<<endl;
 
@@ -196,7 +193,7 @@ void COMPASS::setup_Compass(){
 
 
 
-void COMPASS::read_Accel_Mag(){
+void COMPASS::read_Accel_Mag(void){
 	accel.getAcceleration(&accelRAW.x, &accelRAW.y, &accelRAW.z); //Read accel.
 	mag.getHeading(&magRAW.x, &magRAW.y, &magRAW.z); // Read mag. 
 }
@@ -204,11 +201,11 @@ void COMPASS::read_Accel_Mag(){
 // ACCELEROMETER
 ////////////////////////////////////////////////////////////////////////////////////
 
-void COMPASS::calibrateAccel(){
+void COMPASS::calibrateAccel(void){
 
-	mat X(4,3);
-	mat Y(6,3);
-	mat w(6,4);
+	arma::mat X(4,3);
+	arma::mat Y(6,3);
+	arma::mat w(6,4);
 	
 	string axis[6] = {"Z down","Z up","Y down","Y up","X down", "X up"};
 
@@ -256,11 +253,11 @@ void COMPASS::calibrateAccel(){
 
 AccelG COMPASS::read_AccelG(void){
 	
-	mat X(4,3);
-	mat Am(3,3);
-	mat Ao(3,1);
-	mat fg(3,1);
-	mat cg(3,1);
+	arma::mat X(4,3);
+	arma::mat Am(3,3);
+	arma::mat Ao(3,1);
+	arma::mat fg(3,1);
+	arma::mat cg(3,1);
 
 	accel.getAcceleration(&accelRAW.x, &accelRAW.y, &accelRAW.z); //Read accel.
 	

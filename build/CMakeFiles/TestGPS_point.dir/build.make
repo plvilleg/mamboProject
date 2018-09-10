@@ -94,6 +94,7 @@ TestGPS_point: libCOMPASS.a
 TestGPS_point: libADXL345.a
 TestGPS_point: libHMC5843.a
 TestGPS_point: libRELATIVE_DISTANCE.a
+TestGPS_point: /usr/lib/arm-linux-gnueabihf/libarmadillo.so
 TestGPS_point: /usr/lib/arm-linux-gnueabihf/libm.so
 TestGPS_point: CMakeFiles/TestGPS_point.dir/link.txt
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --bold --progress-dir=/home/pi/mamboProject/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_2) "Linking CXX executable TestGPS_point"

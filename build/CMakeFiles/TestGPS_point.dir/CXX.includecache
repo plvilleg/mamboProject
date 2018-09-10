@@ -39,9 +39,9 @@ ADXL345.h
 ../lib/ADXL345.h
 config.h
 ../lib/config.h
-unistd.h
--
 armadillo
+-
+unistd.h
 -
 
 ../lib/HMC5843.h

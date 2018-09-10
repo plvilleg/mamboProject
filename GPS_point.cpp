@@ -11,9 +11,10 @@
 #include <time.h>
 
 // Special libraries 
+#include "config.h"
 #include "COMPASS.h"
 #include "RELATIVE_DISTANCE.h"
-#include "config.h"
+
 #include <libserialport.h>
 extern "C" {
 #include <libsbp/sbp.h>
@@ -29,7 +30,7 @@ extern "C" {
 /////////////////////////////////////////////////////////////////////////////////
 // Variables
 using namespace std;
-
+using namespace arma;
 
 const float PI = (atan(1)*4); 
 

@@ -103,6 +103,8 @@ fstream
 -
 time.h
 -
+signal.h
+-
 libserialport.h
 -
 libsbp/sbp.h

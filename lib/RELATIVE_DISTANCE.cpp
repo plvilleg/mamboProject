@@ -51,6 +51,9 @@ void RelativeDistace::setSpeaker_3(double x3, double y3){
 
 double RelativeDistace::relative_distance(double Ta, double Tb, double Tc, double depth){
 	
+	#if (DEBUG_MODE > 0)
+		printf("Calc relative distance \n");
+	#endif
 	double dist_a = 0.0, dist_b = 0.0, dist_c = 0.0, rel_distA = 0.0, rel_distB = 0.0, rel_distC = 0.0, XAxis, YAxis;
 
 	dist_a = W_speed * Ta;
@@ -61,10 +64,20 @@ double RelativeDistace::relative_distance(double Ta, double Tb, double Tc, doubl
 	rel_distB = sqrt(pow(dist_b,2) + pow(depth,2));
 	rel_distC = sqrt(pow(dist_c,2) + pow(depth,2));
 
+
+	#if (DEBUG_MODE > 0)
+		printf("Calc mean square... \n");
+	#endif
+
 	relative_dist =  leastSqueare(sp1.X, sp1.Y, sp2.X, sp2.Y, sp3.X, sp3.Y, rel_distA, rel_distB, rel_distC);
 
+
+	#if (DEBUG_MODE > 0)
+		printf("Calc mean square OK..! \n");
+	#endif
+
 	XAxis =  relative_dist(0,0);
-	YAxis =  relative_dist(0,1);
+	YAxis =  relative_dist(1,0);
 
 	return sqrt(pow(XAxis,2) + pow(YAxis,2));
 }

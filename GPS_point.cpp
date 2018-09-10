@@ -9,6 +9,7 @@
 #include <unistd.h>
 #include <fstream>
 #include <time.h>
+#include <signal.h>
 
 #include <libserialport.h>
 extern "C" {
@@ -31,15 +32,14 @@ extern "C" {
 
 /////////////////////////////////////////////////////////////////////////////////
 // Variables
-//using namespace std;
-//using namespace arma;
+volatile sig_atomic_t flag = 0;
 
 const float PI = (atan(1)*4); 
 
 COMPASS comp;
 RelativeDistace dist;
 
-std::fstream archivo1;
+fstream logFile;
 
 // Serial variables
 char *serial_port_name = NULL;
@@ -51,8 +51,8 @@ struct sp_port *piksi_port = NULL;
 sbp_state_t sbp_state;	// State of the SBP parser.
 
 // SBP structs that messages from Piksi will feed. 
-msg_pos_llh_t	pos_llh;
-msg_utc_time_t	gps_time;
+msg_pos_llh_dep_a_t	pos_llh;
+msg_gps_time_dep_a_t	gps_time;
 
 /* SBP callback node must be statically allocated. Each message ID / callback pair
 must have a unique sbp_msg_callbacks_node_t associated with it*/
@@ -75,13 +75,13 @@ static sbp_msg_callbacks_node_t gps_time_node;
 */
 void sbp_pos_llh_callback(u16 sender_id, u8 len, u8 msg[], void *context)
 {
-	pos_llh = *(msg_pos_llh_t *)msg;
+	pos_llh = *(msg_pos_llh_dep_a_t *)msg;
 }
 
 
 void sbp_gps_time_callback(u16 sender_id, u8 len, u8 msg[], void *context)
 {
-	gps_time = *(msg_utc_time_t *)msg;
+	gps_time = *(msg_gps_time_dep_a_t *)msg;
 }
 
 
@@ -94,13 +94,13 @@ void sbp_setup(void)
 
 	/* Register a node and callback, and associate them with a specific message ID*/
 	
-	ret = sbp_register_callback(&sbp_state, SBP_MSG_POS_LLH, &sbp_pos_llh_callback, NULL, &pos_llh_node);
+	ret = sbp_register_callback(&sbp_state, SBP_MSG_POS_LLH_DEP_A, &sbp_pos_llh_callback, NULL, &pos_llh_node);
 	if(ret != SBP_OK){
 		printf("SBP_CALLBACK_ERROR");
 		exit(EXIT_FAILURE);
 	}
 
-	ret = sbp_register_callback(&sbp_state, SBP_MSG_UTC_TIME, &sbp_gps_time_callback, NULL, &gps_time_node);
+	ret = sbp_register_callback(&sbp_state, SBP_MSG_GPS_TIME_DEP_A, &sbp_gps_time_callback, NULL, &gps_time_node);
 	if(ret != SBP_OK){
 		printf("SBP_CALLBACK_ERROR");
 		exit(EXIT_FAILURE);
@@ -126,7 +126,7 @@ u32 piksi_port_read(u8 *buff, u32 n, void *context)
 
 // Help message
 void usage(char *prog_name){
-	fprintf(stderr, "usage: %s [-p serial port]\n", prog_name);
+	fprintf(stderr, "usage: %s [-p serial port]\n ta tb tc fileName.cvs", prog_name);
 }
 
 // Setup PORT
@@ -176,6 +176,11 @@ double toDegrees(double radians){
 	return radians * 180/PI;
 }
 
+void exitFunction(int sig){
+	flag = 1;
+
+}
+
 
 /////////////////////////////////////////////////////////////////////////////////
 //
@@ -196,11 +201,10 @@ int main(int argc, char **argv)
 	double distance, bearing, x, y; 
 	double Ta, Tb, Tc, depth;
 	
-	char buffer3[80];
-	char fixMode;
+	char buffer3[80], buffer4[300];
+	int8_t fixMode;
 
-	char *fileName = NULL;;
- 
+	
 	std::string timeA, timeB, timeC; 
 	std::string::size_type sz;
 
@@ -228,6 +232,8 @@ int main(int argc, char **argv)
 // Initial setup
 
 	printf("Configuring Buoy..!\n");
+	
+	signal(SIGINT, exitFunction);
 	
 	while((opt = getopt(argc, argv, "p:")) != -1) {
 		switch(opt){
@@ -288,20 +294,22 @@ int main(int argc, char **argv)
 /////////////////////////////////////////////////////////////////////////////////
 // Create log file	
 	printf("Creating file log..!\n");	
+		
 
-	//if( (archivo1 = fopen("test.txt", "w+") ) == NULL){
-	//	printf("ERROR: Cannot open the file");
-	//	exit(EXIT_FAILURE);		
-	//}
+	time(&seconds);
 
+	time_gps = localtime(&seconds);
+
+	strftime(buffer3,sizeof(buffer3)-1,"%Y%m%d_%H%M%S",time_gps);
+
+	sprintf(buffer3,buffer3,"_",argv[6]);
+
+	cout << buffer3 << endl;
+
+	logFile.open(buffer3, ios::out); //argv[6]
 	
-	//fprintf(archivo1,"time,latitude,longitude,depth,\n");
+	logFile <<"Time" <<"," <<"latitude" <<"," <<"longitude" <<"," <<"depth" <<"," <<"fixed_state" <<endl;
 
-	archivo1.open(argv[6], ios::app);
-	
-	//printf("%s", argv[6]);
-	//strcpy(fileName,argv[6]);
-	//fileName = *argv[6];
 	printf("File log successful created..!\n");	
 //
 /////////////////////////////////////////////////////////////////////////////////
@@ -319,15 +327,16 @@ int main(int argc, char **argv)
 	
 		if(ret == SBP_OK_CALLBACK_EXECUTED)
 		{	
-			//seconds = (time_t)(gps_time.tow*1000);
-			//time_gps = localtime(&seconds);
+			seconds = (time_t)(gps_time.tow*1000);
+			time_gps = localtime(&seconds);
 
-			sprintf(buffer3,"%d/%d/%d_%d:%d:%d",gps_time.year, gps_time.month, gps_time.day, gps_time.hours, gps_time.minutes, gps_time.seconds);
+			//sprintf(buffer3,"%d/%d/%d_%d:%d:%d",gps_time.year, gps_time.month, gps_time.day, gps_time.hours, gps_time.minutes, gps_time.seconds);
 	
-			//strftime(buffer3,sizeof(buffer3)-1,"%Y%m%d_%H%M%S",time_gps);
+
+			strftime(buffer3,sizeof(buffer3)-1,"%Y%m%d_%H%M%S",time_gps);
 	
-			lat_O_deg =  -2.142992;//pos_llh.lat;
-			lon_O_deg =  -79.967774;//pos_llh.lon;
+			lat_O_deg = pos_llh.lat; //-2.142992;
+			lon_O_deg = pos_llh.lon; //-79.967774;
 
 			fixMode = pos_llh.flags & 0x07;
 		
@@ -342,9 +351,11 @@ int main(int argc, char **argv)
 
 			distance = dist.relative_distance(Ta, Tb, Tc, depth);
 
+			distance /= 1000;
+
 			printf("Distance %2.6f\n",distance);
 		
-			bearing = comp.get_Comp_heading();
+			bearing = 30;//comp.get_Comp_heading();
 
 			theta = toRadians(bearing);
 		
@@ -368,8 +379,28 @@ int main(int argc, char **argv)
 
 			printf("Latitude dest: %2.6f\n", lat_D_deg);
 			printf("Longitude dest: %2.6f\n",lon_D_deg);
+
+			sprintf(buffer4,"%2.6f,%2.6f,%2.3f,%d",lat_D_deg, lon_D_deg, depth, fixMode);
 			
-			archivo1 << buffer3 <<","<< lat_D_deg<<"," << lon_D_deg<<"," << depth <<","<<fixMode<<endl;
+			logFile << buffer3 <<","<< buffer4 <<endl;
+			
+			if(flag){
+				printf("End program.! \n");
+				logFile.close();
+
+				result = sp_close(piksi_port);
+				if(result != SP_OK){
+					fprintf(stderr, "Cannot close %s properly!\n", serial_port_name);
+				}
+	
+				sp_free_port(piksi_port);
+	
+				free(serial_port_name);
+				exit (NULL);
+
+			}
+		
+			usleep(1000000);
 		
 		}
 	}
@@ -377,18 +408,6 @@ int main(int argc, char **argv)
 /////////////////////////////////////////////////////////////////////////////////
 
 
-		archivo1.close();
-
-		result = sp_close(piksi_port);
-		if(result != SP_OK){
-			fprintf(stderr, "Cannot close %s properly!\n", serial_port_name);
-		}
-	
-		sp_free_port(piksi_port);
-	
-		free(serial_port_name);
-
-	
 	return 0;
 }
 //

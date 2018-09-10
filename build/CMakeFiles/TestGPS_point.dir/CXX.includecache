@@ -79,10 +79,10 @@ time.h
 -
 fstream
 -
-armadillo
--
 config.h
 ../lib/config.h
+armadillo
+-
 
 ../lib/config.h
 
@@ -103,12 +103,6 @@ fstream
 -
 time.h
 -
-COMPASS.h
-/home/pi/mamboProject/COMPASS.h
-RELATIVE_DISTANCE.h
-/home/pi/mamboProject/RELATIVE_DISTANCE.h
-config.h
-/home/pi/mamboProject/config.h
 libserialport.h
 -
 libsbp/sbp.h
@@ -119,6 +113,12 @@ libsbp/navigation.h
 -
 libsbp/system.h
 -
+config.h
+/home/pi/mamboProject/config.h
+COMPASS.h
+/home/pi/mamboProject/COMPASS.h
+RELATIVE_DISTANCE.h
+/home/pi/mamboProject/RELATIVE_DISTANCE.h
 
 /usr/local/include/libsbp/common.h
 stdint.h

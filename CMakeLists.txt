@@ -14,7 +14,7 @@ set(CMAKE_MODULE_PATH "${CMAKE_SOURCE_DIR}/cmake")
 
 
 set(GCC_ARMADILLO_FLAGS "-O2  -I /home/pi/armadillo-8.600.0/include/ -DARMA_DONT_USE_WRAPPER -lblas -llapack -lgfortran")
-set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${GCC_ARMADILLO_FLAGS} -Wall -Wextra -pedantic -pthread -g -O0 -fprofile-arcs -ftest-coverage")
+set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${GCC_ARMADILLO_FLAGS} -Wall -Wextra -pedantic -pthread -g -O0 -fprofile-arcs -ftest-coverage -Bsymbolic" )
 
 
 #add the executable

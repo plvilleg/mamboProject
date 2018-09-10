@@ -10,11 +10,6 @@
 #include <fstream>
 #include <time.h>
 
-// Special libraries 
-#include "config.h"
-#include "COMPASS.h"
-#include "RELATIVE_DISTANCE.h"
-
 #include <libserialport.h>
 extern "C" {
 #include <libsbp/sbp.h>
@@ -23,14 +18,21 @@ extern "C" {
 #include <libsbp/system.h>
 }
 
+// Special libraries 
+#include "config.h"
+#include "COMPASS.h"
+#include "RELATIVE_DISTANCE.h"
+
+
+
 
 // /g++ testCompass.cpp compass.cpp HMC5843.cpp ADXL345.cpp -o testcompass -O2 -lwiringPi -larmadillo
 
 
 /////////////////////////////////////////////////////////////////////////////////
 // Variables
-using namespace std;
-using namespace arma;
+//using namespace std;
+//using namespace arma;
 
 const float PI = (atan(1)*4); 
 

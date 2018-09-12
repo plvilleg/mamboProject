@@ -270,8 +270,6 @@ AccelG COMPASS::read_AccelG(void){
 		Ao = trans(X.submat(span(3,3),span(0,2)));
 		Ao.print("Ao: ");
 	
-		
-		
 		printf("Read accel RAW OK.!\n");
 	
 		fg(0,0) = (int)(accelRAW.x*(-1));
@@ -513,7 +511,7 @@ void COMPASS::getcalmag(double *x, double *y, double *z){
 	*z = (magRAW.z - magOffsetz) / z_scale;
 
 	#if(DEBUG_MODE > 0)
-		printf("MAG_Xraw: %d\t MAG_Yraw: %d\t MAG_Zraw: %d\n",-1*magRAW.x, magRAW.y, magRAW.z );
+		printf("MAG_Xraw: %d\t MAG_Yraw: %d\t MAG_Zraw: %d\n",magRAW.x, magRAW.y, magRAW.z );
 		printf("x_scale: %f\t y_scale: %f\t z_scale: %f\n",x_scale, y_scale ,z_scale);
 		printf("MAG_X_scale: %5.3f\t MAG_Yraw_scale: %5.3f\t MAG_Zraw_scale: %5.3f\n",*x,*y,*z);
 		

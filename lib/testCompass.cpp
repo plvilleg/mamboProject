@@ -9,7 +9,7 @@
 #include "COMPASS.h"
 
 
-//g++ testCompass.cpp compass.cpp HMC5843.cpp ADXL345.cpp -o testcompass -O2 -lwiringPi -larmadillo
+//g++ testCompass.cpp COMPASS.cpp HMC5843.cpp ADXL345.cpp -o testcompass -O2 -lwiringPi -larmadillo
 const float PI = (atan(1)*4);
 
 int main(){

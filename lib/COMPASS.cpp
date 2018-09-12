@@ -10,9 +10,6 @@
 //g++ compass.cpp  HMC5843.cpp ADXL345.cpp -o compass -O2 -lwiringPi -larmadillo
 
 
-//using namespace arma;
-
-
 const float PI = (atan(1)*4);
 
 const int16_t counts_per_milligaus[8] = {
@@ -324,11 +321,11 @@ AccelRotation COMPASS::readPitchRoll(void){
 	
 	temppitch = asin(-accel.x);
 	if(temppitch >= ((PI/2)-0.05235)){
-		rot.pitch = (PI/2);
+		rot.pitch = (PI/2) * (180/PI);
 		rot.roll=0;
 	}else{	
-		rot.pitch = temppitch;
-		rot.roll = asin(accel.y/cos(rot.pitch));
+		rot.pitch = temppitch * (180/PI);
+		rot.roll = asin(accel.y/cos(rot.pitch))* (180/PI);
 	}
 	
 	return rot;
@@ -506,9 +503,9 @@ void COMPASS::getcalmag(double *x, double *y, double *z){
 	
 	mag.getHeading(&magRAW.x, &magRAW.y, &magRAW.z); // Read mag. 
 
-	*x = -1 * (magRAW.x - magOffsetx) / x_scale;
-	*y = (magRAW.y - magOffsety) / y_scale;
-	*z = (magRAW.z - magOffsetz) / z_scale;
+	*x = -1 * (magRAW.x - magOffsetx) * x_scale;
+	*y = (magRAW.y - magOffsety) * y_scale;
+	*z = (magRAW.z - magOffsetz) * z_scale;
 
 	#if(DEBUG_MODE > 0)
 		printf("MAG_Xraw: %d\t MAG_Yraw: %d\t MAG_Zraw: %d\n",magRAW.x, magRAW.y, magRAW.z );
@@ -544,23 +541,23 @@ float COMPASS::get_Comp_heading(){
 	double x, y, z;
 
 	getMagAxes(&x, &y, &z);
-	declinationAngle = -2.23333 * (PI/180);
+	declinationAngle = -2.23333 ;//* (PI/180);
 
 	#if (DEBUG_MODE > 0)
-		printf("RAW azimuth: %3.2f\t\n",(atan2(y,x)+declinationAngle) * (180/PI));
+		printf("RAW azimuth: %3.2f\t\n", (atan2(y,x) * 180/PI) +declinationAngle );
 	#endif
 	
 	if(x < 0)
 	{
-		return 	(180 + ((atan2(y,x) + declinationAngle) * (180/PI)));
+		return 	(180 + (atan2(y,x) * 180/PI) + declinationAngle);
 	}else 
 	if(x > 0 && y <= 0)
 	{
-		return 	(360 + ((atan2(y,x) + declinationAngle) * (180/PI)));
+		return 	(360 + (atan2(y,x) * 180/PI) + declinationAngle);
 	} else
 	if(x > 0 && y >= 0)
 	{
-		return 	(atan2(y,x) + declinationAngle) * (180/PI);		
+		return (atan2(y,x) * 180/PI) + declinationAngle ;		
 	} else 
 	if(x == 0 && y < 0)
 	{
@@ -571,13 +568,6 @@ float COMPASS::get_Comp_heading(){
 		return 270.0;
 	}
 
-//	if(heading < 0)
-//		heading += (2*PI);
-//
-//	if(heading > (2*PI))
-//		heading -= 2*PI;		
-//
-	return heading;
 }
 		
 

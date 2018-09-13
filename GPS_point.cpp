@@ -1,5 +1,19 @@
-//http://www.dirsig.org/docs/new/coordinates.html
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+//Programa principal para la obtención de los puntos GPS de la ubicación del submarino
+//Versión 1.0
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
+//////////////////////////////
 // Standards libraries
 #include <stdio.h>
 #include <cstdlib>
@@ -10,36 +24,46 @@
 #include <fstream>
 #include <time.h>
 #include <signal.h>
+//
+//////////////////////////////
 
-#include <libserialport.h>
+//////////////////////////////
+//Piksi libraries
+#include <libserialport.h> // Serialport library
 extern "C" {
 #include <libsbp/sbp.h>
 #include <libsbp/piksi.h>
 #include <libsbp/navigation.h>
 #include <libsbp/system.h>
 }
+//
+//////////////////////////////
 
+//////////////////////////////
 // Special libraries 
 #include "config.h"
 #include "COMPASS.h"
 #include "RELATIVE_DISTANCE.h"
-
-
-
-
-// /g++ testCompass.cpp compass.cpp HMC5843.cpp ADXL345.cpp -o testcompass -O2 -lwiringPi -larmadillo
+//
+//////////////////////////////
 
 
 /////////////////////////////////////////////////////////////////////////////////
-// Variables
-volatile sig_atomic_t flag = 0;
+// Execution command
+// g++ testCompass.cpp compass.cpp HMC5843.cpp ADXL345.cpp -o testcompass -O2 -lwiringPi -larmadillo
+/////////////////////////////////////////////////////////////////////////////////
 
-const float PI = (atan(1)*4); 
+/////////////////////////////////////////////////////////////////////////////////
+// Global variables
 
-COMPASS comp;
-RelativeDistace dist;
+volatile sig_atomic_t flag = 0; // interruption variable
 
-fstream logFile;
+const float PI = (atan(1)*4); // Declaration of PI variable
+
+COMPASS comp; 		// Declaration of a object of class COMPASS
+RelativeDistace dist;	// Declaration of a object of class RelativeDistace
+
+fstream logFile;	// Declaration of file variable
 
 // Serial variables
 char *serial_port_name = NULL;
@@ -75,16 +99,18 @@ static sbp_msg_callbacks_node_t gps_time_node;
 */
 void sbp_pos_llh_callback(u16 sender_id, u8 len, u8 msg[], void *context)
 {
-	pos_llh = *(msg_pos_llh_dep_a_t *)msg;
+	pos_llh = *(msg_pos_llh_dep_a_t *)msg; // Parse the message to msg_pos_llh_dep_a_t type
 }
 
 
 void sbp_gps_time_callback(u16 sender_id, u8 len, u8 msg[], void *context)
 {
-	gps_time = *(msg_gps_time_dep_a_t *)msg;
+	gps_time = *(msg_gps_time_dep_a_t *)msg; // Parse the message to msg_gps_time_dep_a_t type
 }
 
 
+/////////////////////////////////////////////
+//  This function configure the piksi
 void sbp_setup(void)
 {
 	int ret = -5;
@@ -109,6 +135,8 @@ void sbp_setup(void)
 	printf("SBP_SETUP_OK\n\n");
 }
 
+/////////////////////////////////////////////
+// This function read the serial port that is connected to the piksi
 u32 piksi_port_read(u8 *buff, u32 n, void *context)
 {
 	(void)context;
@@ -116,7 +144,6 @@ u32 piksi_port_read(u8 *buff, u32 n, void *context)
 	result = sp_blocking_read(piksi_port, buff, n, 0);
 	return result;
 }
-
 //
 /////////////////////////////////////////////////////////////////////////////////
 
@@ -124,12 +151,16 @@ u32 piksi_port_read(u8 *buff, u32 n, void *context)
 /////////////////////////////////////////////////////////////////////////////////
 // Port configuration
 
+/////////////////////////////////////////////
 // Help message
 void usage(char *prog_name){
 	fprintf(stderr, "usage: %s [-p serial port]\n ta tb tc fileName.cvs", prog_name);
 }
+//
+/////////////////////////////////////////////
 
-// Setup PORT
+/////////////////////////////////////////////
+// This function setup the serial port
 void setup_port()
 {
 	int result;
@@ -165,44 +196,62 @@ void setup_port()
 	}
 }
 //
+/////////////////////////////////////////////
+
+
+//
 /////////////////////////////////////////////////////////////////////////////////
 
+/////////////////////////////////////////////////////////////////////////////////
+//  This function converts deggree to radians
 double toRadians(double degrees){
 	return degrees * PI/180;
 }
-
-
-double toDegrees(double radians){
-	return radians * 180/PI;
-}
-
-void exitFunction(int sig){
-	flag = 1;
-
-}
+//
+/////////////////////////////////////////////////////////////////////////////////
 
 
 /////////////////////////////////////////////////////////////////////////////////
+//  This function converts radians to degree
+double toDegrees(double radians){
+	return radians * 180/PI;
+}
 //
+/////////////////////////////////////////////////////////////////////////////////
+
+/////////////////////////////////////////////////////////////////////////////////
+//  Helper function of a crtl-c interruption
+void exitFunction(int sig){
+	flag = 1;
+}
+//
+/////////////////////////////////////////////////////////////////////////////////
+
+
+
+/////////////////////////////////////////////////////////////////////////////////
+// This is the main function
 int main(int argc, char **argv)
 {
 
 /////////////////////////////////////////
-//  Variables
+//  Local variables
 
 	int opt; // Option arg
-	int result = 0;
-	int ret=0;
+	int result = 0; // State of configuration
+	int ret=0; // State of Piksi messages
+
 
 	time_t seconds;
 	struct tm *time_gps;
 
-	double lat_O_deg, lon_O_deg, lat_O_rad, lon_O_rad, lat_D_rad, lon_D_rad, lat_D_deg, lon_D_deg, theta, gamma;
-	double distance, bearing, x, y; 
-	double Ta, Tb, Tc, depth;
+	double lat_O_deg, lon_O_deg, lat_O_rad, lon_O_rad, lat_D_rad, lon_D_rad, lat_D_deg, lon_D_deg, theta, gamma; // Geograpihc variables
+	double distance, bearing, x, y; // Point variables
+	double Ta, Tb, Tc, depth; // Values adquire from submarine
+	int8_t fixMode;  //State of GPS pression	
+
+	char buffer3[80], buffer4[300]; // Buffers
 	
-	char buffer3[80], buffer4[300];
-	int8_t fixMode;
 
 	
 	std::string timeA, timeB, timeC; 

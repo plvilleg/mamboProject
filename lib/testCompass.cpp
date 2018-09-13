@@ -25,8 +25,6 @@ int main(){
 	
 	mag.init();
 
-
-	
 	AccelG res;
 	AccelRotation rot;
 
@@ -47,8 +45,8 @@ int main(){
 
 	rot = mag.readPitchRoll();
 
-	printf("Pitch: %3.5f\t",rot.pitch * (180/PI));
-	printf("Roll: %3.5f\t",rot.roll * (180/PI));
+	printf("Pitch: %3.5f\t",rot.pitch * 180/PI);
+	printf("Roll: %3.5f\t",rot.roll * 180/PI);
 	printf("\n\n");
 
 

@@ -321,11 +321,11 @@ AccelRotation COMPASS::readPitchRoll(void){
 	
 	temppitch = asin(-accel.x);
 	if(temppitch >= ((PI/2)-0.05235)){
-		rot.pitch = (PI/2) * (180/PI);
+		rot.pitch = (PI/2);
 		rot.roll=0;
 	}else{	
-		rot.pitch = temppitch * (180/PI);
-		rot.roll = asin(accel.y/cos(rot.pitch))* (180/PI);
+		rot.pitch = temppitch;
+		rot.roll = asin(accel.y/cos(rot.pitch));
 	}
 	
 	return rot;

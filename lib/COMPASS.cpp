@@ -503,9 +503,9 @@ void COMPASS::getcalmag(double *x, double *y, double *z){
 	
 	mag.getHeading(&magRAW.x, &magRAW.y, &magRAW.z); // Read mag. 
 
-	*x = -1 * (magRAW.x - magOffsetx) * x_scale;
-	*y = (magRAW.y - magOffsety) * y_scale;
-	*z = (magRAW.z - magOffsetz) * z_scale;
+	*x = (magRAW.x - magOffsetx) * x_scale;
+	*y = -1 * (magRAW.y - magOffsety) * y_scale;
+	*z = -1 * (magRAW.z - magOffsetz) * z_scale;
 
 	#if(DEBUG_MODE > 0)
 		printf("MAG_Xraw: %d\t MAG_Yraw: %d\t MAG_Zraw: %d\n",magRAW.x, magRAW.y, magRAW.z );

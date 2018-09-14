@@ -3,7 +3,7 @@
 //Versión 1.0
 //
 //
-//
+//./TestGPS_point -p /dev/ttyUSB0 0.001 0.001 0.001 test1
 //
 //
 //
@@ -120,13 +120,13 @@ void sbp_setup(void)
 
 	/* Register a node and callback, and associate them with a specific message ID*/
 	
-	ret = sbp_register_callback(&sbp_state, SBP_MSG_POS_LLH_DEP_A, &sbp_pos_llh_callback, NULL, &pos_llh_node);
+	ret = sbp_register_callback(&sbp_state, 0x0201, &sbp_pos_llh_callback, NULL, &pos_llh_node);
 	if(ret != SBP_OK){
 		printf("SBP_CALLBACK_ERROR");
 		exit(EXIT_FAILURE);
 	}
 
-	ret = sbp_register_callback(&sbp_state, SBP_MSG_GPS_TIME_DEP_A, &sbp_gps_time_callback, NULL, &gps_time_node);
+	ret = sbp_register_callback(&sbp_state, 0x0100, &sbp_gps_time_callback, NULL, &gps_time_node);
 	if(ret != SBP_OK){
 		printf("SBP_CALLBACK_ERROR");
 		exit(EXIT_FAILURE);
@@ -154,7 +154,7 @@ u32 piksi_port_read(u8 *buff, u32 n, void *context)
 /////////////////////////////////////////////
 // Help message
 void usage(char *prog_name){
-	fprintf(stderr, "usage: %s [-p serial port]\n ta tb tc fileName.cvs", prog_name);
+	fprintf(stderr, "usage: %s [-p serial port] ta tb tc fileName.csv\n", prog_name);
 }
 //
 /////////////////////////////////////////////
@@ -351,7 +351,8 @@ int main(int argc, char **argv)
 
 	strftime(buffer3,sizeof(buffer3)-1,"%Y%m%d_%H%M%S",time_gps);
 
-	sprintf(buffer3,buffer3,"_",argv[6]);
+	//sprintf(buffer3,buffer3,"_",(char *)argv[6]);
+	strcat(buffer3,argv[6]);
 
 	cout << buffer3 << endl;
 
@@ -371,8 +372,10 @@ int main(int argc, char **argv)
 		// Get GPS information 
 		ret = sbp_process(&sbp_state, &piksi_port_read);
 	
-		if(ret < 0)
+		if(ret != SBP_OK_CALLBACK_EXECUTED){
 			printf("sbp_process error\n");
+			printf("ret: %d\n",ret);
+		}
 	
 		if(ret == SBP_OK_CALLBACK_EXECUTED)
 		{	
@@ -384,8 +387,8 @@ int main(int argc, char **argv)
 
 			strftime(buffer3,sizeof(buffer3)-1,"%Y%m%d_%H%M%S",time_gps);
 	
-			lat_O_deg = pos_llh.lat; //-2.142992;
-			lon_O_deg = pos_llh.lon; //-79.967774;
+			lat_O_deg = -2.142992;//pos_llh.lat; //-2.142992;
+			lon_O_deg = -79.967774;//pos_llh.lon; //-79.967774;
 
 			fixMode = pos_llh.flags & 0x07;
 		
@@ -404,7 +407,7 @@ int main(int argc, char **argv)
 
 			printf("Distance %2.6f\n",distance);
 		
-			bearing = 30;//comp.get_Comp_heading();
+			bearing = 45;//comp.get_Comp_heading();
 
 			theta = toRadians(bearing);
 		
@@ -452,6 +455,21 @@ int main(int argc, char **argv)
 			usleep(1000000);
 		
 		}
+		if(flag){
+				printf("End program.! \n");
+				logFile.close();
+
+				result = sp_close(piksi_port);
+				if(result != SP_OK){
+					fprintf(stderr, "Cannot close %s properly!\n", serial_port_name);
+				}
+	
+				sp_free_port(piksi_port);
+	
+				free(serial_port_name);
+				exit (NULL);
+
+			}
 	}
 //
 /////////////////////////////////////////////////////////////////////////////////

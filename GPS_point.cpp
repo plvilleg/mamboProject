@@ -387,8 +387,8 @@ int main(int argc, char **argv)
 
 			strftime(buffer3,sizeof(buffer3)-1,"%Y%m%d_%H%M%S",time_gps);
 	
-			lat_O_deg = -2.142992;//pos_llh.lat; //-2.142992;
-			lon_O_deg = -79.967774;//pos_llh.lon; //-79.967774;
+			lat_O_deg = pos_llh.lat; //-2.142992;
+			lon_O_deg = pos_llh.lon; //-79.967774;
 
 			fixMode = pos_llh.flags & 0x07;
 		

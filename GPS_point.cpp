@@ -373,8 +373,10 @@ int main(int argc, char **argv)
 		ret = sbp_process(&sbp_state, &piksi_port_read);
 	
 		if(ret != SBP_OK_CALLBACK_EXECUTED){
-			printf("sbp_process error\n");
-			printf("ret: %d\n",ret);
+			#if (DEBUG_MODE > 0)
+				printf("sbp_process error\n");
+				printf("ret: %d\n",ret);
+			#endif
 		}
 	
 		if(ret == SBP_OK_CALLBACK_EXECUTED)

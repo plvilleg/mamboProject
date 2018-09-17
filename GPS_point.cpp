@@ -358,7 +358,7 @@ int main(int argc, char **argv)
 
 	logFile.open(buffer3, ios::out); //argv[6]
 	
-	logFile <<"Time" <<"," <<"latitude" <<"," <<"longitude" <<"," <<"depth" <<"," <<"fixed_state" <<endl;
+	logFile <<"Time" <<","<< "BUOY_latitude"<<"," <<"BUOY_longitude" <<"," <<"ROV_latitude" <<"," <<"ROV_longitude" <<"," <<"depth" <<"," <<"fixed_state" <<endl;
 
 	printf("File log successful created..!\n");	
 //
@@ -434,7 +434,7 @@ int main(int argc, char **argv)
 			printf("Latitude dest: %2.6f\n", lat_D_deg);
 			printf("Longitude dest: %2.6f\n",lon_D_deg);
 
-			sprintf(buffer4,"%2.6f,%2.6f,%2.3f,%d",lat_D_deg, lon_D_deg, depth, fixMode);
+			sprintf(buffer4,"%2.8f,%2.8f,%2.8f,%2.8f,%2.3f,%d",lat_O_deg, lon_O_deg, lat_D_deg, lon_D_deg, depth, fixMode);
 			
 			logFile << buffer3 <<","<< buffer4 <<endl;
 			

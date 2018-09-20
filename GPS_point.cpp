@@ -3,7 +3,7 @@
 //Versión 1.0
 //
 //
-//./TestGPS_point -p /dev/ttyUSB0 0.001 0.001 0.001 test1
+//./TestGPS_point -p /dev/ttyUSB0 0.001 0.001 0.001 
 //
 //
 //
@@ -63,11 +63,23 @@ const float PI = (atan(1)*4); // Declaration of PI variable
 COMPASS comp; 		// Declaration of a object of class COMPASS
 RelativeDistace dist;	// Declaration of a object of class RelativeDistace
 
-fstream logFile;	// Declaration of file variable
+fstream dataLogFile;	// Declaration of file variable
+fstream eventlogFile;
 
 // Serial variables
 char *serial_port_name = NULL;
 struct sp_port *piksi_port = NULL;
+
+time_t seconds;
+struct tm *timestamp;
+
+char buffer3[80], buffer4[300]; // Buffers
+char eventTime[50];
+
+//  Default log dir
+char defaultdataDIR[80] = "/home/pi/mamboProject/logs/data/";
+char defaulteventDIR[80] = "/home/pi/mamboProject/logs/events/";
+
 
 ///////////////////////////////////////////
 // Piksi variables
@@ -227,6 +239,57 @@ void exitFunction(int sig){
 //
 /////////////////////////////////////////////////////////////////////////////////
 
+/////////////////////////////////////////////////////////////////////////////////
+// Create log file
+bool createLogFiles(void){
+	
+	printf("Creating files logs..!\n");	
+	
+	time(&seconds);
+	timestamp = localtime(&seconds);
+
+	strftime(buffer3,sizeof(buffer3)-1,"%Y-%m-%d_%H%M%S",timestamp);
+	strcat(buffer3,"_dataLog.cvs");
+	strcat(defaultdataDIR,buffer3);
+	dataLogFile.open(defaultdataDIR, ios::out); 
+
+	memset(buffer3,'\0',80);
+	strftime(buffer3,sizeof(buffer3)-1,"%Y-%m-%d_%H%M%S",timestamp);
+	strcat(buffer3,"_eventLog.cvs");
+	strcat(defaulteventDIR,buffer3);
+	eventlogFile.open(defaulteventDIR, ios::out); 
+	
+	if(dataLogFile.is_open() && eventlogFile.is_open()){
+		dataLogFile <<"Time" <<","<< "BUOY_latitude"<<"," <<"BUOY_longitude" <<"," <<"ROV_latitude" <<"," <<"ROV_longitude" <<"," <<"depth" <<"," <<"fixed_state" <<endl;
+		eventlogFile <<"Time" <<","<< "event"<<endl;
+		printf("File log successful created..!\n");
+		return true;
+	}
+	else {
+		return false;
+	}
+
+
+
+}	
+//
+/////////////////////////////////////////////////////////////////////////////////
+
+/////////////////////////////////////////////////////////////////////////////////
+//  Update eventLog
+bool updateEvent(char *event){
+
+	time(&seconds);
+	timestamp = localtime(&seconds);
+
+	strftime(eventTime,sizeof(eventTime)-1,"%Y%m%d_%H%M%S",timestamp);
+	//sprintf(buffer4,"%2.8f,%2.8f,%2.8f,%2.8f,%2.3f,%d",lat_O_deg, lon_O_deg, lat_D_deg, lon_D_deg, depth, fixMode);
+	
+	eventlogFile << eventTime <<","<< event << endl;
+}
+
+//
+/////////////////////////////////////////////////////////////////////////////////
 
 
 /////////////////////////////////////////////////////////////////////////////////
@@ -237,35 +300,37 @@ int main(int argc, char **argv)
 /////////////////////////////////////////
 //  Local variables
 
+	if(argc <= 1) { // If not passed argument that arise a failure
+		usage(argv[0]);
+		exit(EXIT_FAILURE);
+	}
+
+	if(!createLogFiles()){
+		printf("Files cannot be created, check the path..!\n");
+		exit(EXIT_FAILURE);
+	}
+
+	updateEvent("Files succefull created.");
+
 	int opt; // Option arg
 	int result = 0; // State of configuration
 	int ret=0; // State of Piksi messages
-
-
-	time_t seconds;
-	struct tm *time_gps;
-
+	
 	double lat_O_deg, lon_O_deg, lat_O_rad, lon_O_rad, lat_D_rad, lon_D_rad, lat_D_deg, lon_D_deg, theta, gamma; // Geograpihc variables
 	double distance, bearing, x, y; // Point variables
 	double Ta, Tb, Tc, depth; // Values adquire from submarine
 	int8_t fixMode;  //State of GPS pression	
 
-	char buffer3[80], buffer4[300]; // Buffers
-	
+		
+	std::string timeA, timeB, timeC; // Variables to store the times
+	std::string::size_type sz; // Get the size of a String
 
-	
-	std::string timeA, timeB, timeC; 
-	std::string::size_type sz;
-
-	if(argc <= 1) {
-		usage(argv[0]);
-		exit(EXIT_FAILURE);
-	}
-
+	// Store times
 	timeA = argv[3];
 	timeB = argv[4];
 	timeC = argv[5];
 
+	// Transform time from string to float
 	Ta = std::stod(timeA,&sz);
 	Tb = std::stod(timeB,&sz);
 	Tc = std::stod(timeC,&sz);
@@ -273,6 +338,15 @@ int main(int argc, char **argv)
 	// This value must be adquire from the submarine
 	depth = 5.0;
 
+	
+	comp.init();	// Init the compass
+	dist.init();	// Init method that calculate distance
+
+	// Set the position of the speakers
+	dist.setSpeaker_1(c1X,c1Y); 
+	dist.setSpeaker_2(c2X,c2X);
+	dist.setSpeaker_3(c3X,c3X);
+	
 //
 /////////////////////////////////////////
 
@@ -282,9 +356,9 @@ int main(int argc, char **argv)
 
 	printf("Configuring Buoy..!\n");
 	
-	signal(SIGINT, exitFunction);
+	signal(SIGINT, exitFunction); // Auxiliar function for interruptions
 	
-	while((opt = getopt(argc, argv, "p:")) != -1) {
+	while((opt = getopt(argc, argv, "p:")) != -1) { // Get arguments for configure the serial port
 		switch(opt){
 			case 'p':
 				serial_port_name = (char *)calloc(strlen(optarg) + 1, sizeof(char));
@@ -299,7 +373,9 @@ int main(int argc, char **argv)
 		}
 	}
 
-	if(!serial_port_name){
+////////////////////////////
+// Configure the serial port
+	if(!serial_port_name){ // Check the serial port name variable is set
 		fprintf(stderr, "Please supply the serial port path where the piksi is connected!\n");
 		exit(EXIT_FAILURE);
 	}
@@ -317,54 +393,26 @@ int main(int argc, char **argv)
 	}
 
 	setup_port();
+
 	#if (DEBUG_MODE > 0)
 		printf("Port succesfull configured..!\n");
 	#endif
+//
+////////////////////////////
 	
 
-	sbp_setup();
+	sbp_setup(); // Configure Piksi GPS
 	#if (DEBUG_MODE > 0)
 		printf("Piksi succesfull configured..!\n");
 	#endif
-	
-	comp.init();
-	dist.init();
 
-	// Set the position of the speakers
-	dist.setSpeaker_1(c1X,c1Y); 
-	dist.setSpeaker_2(c2X,c2X);
-	dist.setSpeaker_3(c3X,c3X);
-	
 	printf("Configuration successfull..!\n");
 	
 //
-/////////////////////////////////////////////////////////////////////////////////
+/////////////////////////////////////////
 
-/////////////////////////////////////////////////////////////////////////////////
-// Create log file	
-	printf("Creating file log..!\n");	
-		
 
-	time(&seconds);
-
-	time_gps = localtime(&seconds);
-
-	strftime(buffer3,sizeof(buffer3)-1,"%Y%m%d_%H%M%S",time_gps);
-
-	//sprintf(buffer3,buffer3,"_",(char *)argv[6]);
-	strcat(buffer3,argv[6]);
-
-	cout << buffer3 << endl;
-
-	logFile.open(buffer3, ios::out); //argv[6]
-	
-	logFile <<"Time" <<","<< "BUOY_latitude"<<"," <<"BUOY_longitude" <<"," <<"ROV_latitude" <<"," <<"ROV_longitude" <<"," <<"depth" <<"," <<"fixed_state" <<endl;
-
-	printf("File log successful created..!\n");	
-//
-/////////////////////////////////////////////////////////////////////////////////
-
-/////////////////////////////////////////////////////////////////////////////////
+/////////////////////////////////////////
 //  Main  infinity loop
 
 	while(true){	
@@ -381,13 +429,10 @@ int main(int argc, char **argv)
 	
 		if(ret == SBP_OK_CALLBACK_EXECUTED)
 		{	
-			seconds = (time_t)(gps_time.tow*1000);
-			time_gps = localtime(&seconds);
+			time(&seconds);
+			timestamp = localtime(&seconds);
 
-			//sprintf(buffer3,"%d/%d/%d_%d:%d:%d",gps_time.year, gps_time.month, gps_time.day, gps_time.hours, gps_time.minutes, gps_time.seconds);
-	
-
-			strftime(buffer3,sizeof(buffer3)-1,"%Y%m%d_%H%M%S",time_gps);
+			strftime(buffer3,sizeof(buffer3)-1,"%Y%m%d_%H%M%S",timestamp);
 	
 			lat_O_deg = pos_llh.lat; //-2.142992;
 			lon_O_deg = pos_llh.lon; //-79.967774;
@@ -397,10 +442,7 @@ int main(int argc, char **argv)
 			printf("Latitude %2.6f\n", lat_O_deg);
 			printf("Longitude %2.6f\n",lon_O_deg);
 			
-
-			// lat_O_deg, lon_O_deg, lat_O_rad, lon_O_rad, lat_D_rad, lon_D_rad, lat_D_deg, lon_D_deg, theta, gamma
-
-
+			
 			// Process the submarine GPS point
 
 			distance = dist.relative_distance(Ta, Tb, Tc, depth);
@@ -436,11 +478,12 @@ int main(int argc, char **argv)
 
 			sprintf(buffer4,"%2.8f,%2.8f,%2.8f,%2.8f,%2.3f,%d",lat_O_deg, lon_O_deg, lat_D_deg, lon_D_deg, depth, fixMode);
 			
-			logFile << buffer3 <<","<< buffer4 <<endl;
+			dataLogFile << buffer3 <<","<< buffer4 <<endl;
 			
 			if(flag){
 				printf("End program.! \n");
-				logFile.close();
+				dataLogFile.close();
+				eventlogFile.close();
 
 				result = sp_close(piksi_port);
 				if(result != SP_OK){
@@ -459,7 +502,8 @@ int main(int argc, char **argv)
 		}
 		if(flag){
 				printf("End program.! \n");
-				logFile.close();
+				dataLogFile.close();
+				eventlogFile.close();
 
 				result = sp_close(piksi_port);
 				if(result != SP_OK){
@@ -474,7 +518,7 @@ int main(int argc, char **argv)
 			}
 	}
 //
-/////////////////////////////////////////////////////////////////////////////////
+/////////////////////////////////////////
 
 
 	return 0;
